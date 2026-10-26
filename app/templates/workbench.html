@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}工作台 · PCBA BOM 工作台{% endblock %}
+
+{% block crumb %}
+<span>工作区</span>
+<svg class="lucide lucide-chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+<span data-current="true">工作台</span>
+{% endblock %}
+
+{% block page_title %}工作台{% endblock %}
+
+{% block toolbar_actions %}
+<button type="button" class="wb-btn wb-btn--ghost" data-action="import">
+  <svg class="lucide lucide-folder-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg>
+  导入工程
+</button>
+<button type="button" class="wb-btn wb-btn--ghost" data-action="refresh">
+  <svg class="lucide lucide-refresh-cw" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+  刷新状态
+</button>
+{% endblock %}
+
+{% block page_body %}
+<section class="wb-section" aria-labelledby="wbEntryTitle">
+  <div class="wb-head">
+    <h2 class="wb-title" id="wbEntryTitle">功能入口</h2>
+    <p class="wb-desc">两大核心能力：先核对已有 BOM，再从设计文件生成新 BOM。</p>
+  </div>
+
+  <div class="wb-entry-grid">
+    <article class="wb-card">
+      <div class="wb-card__head">
+        <svg class="lucide lucide-shield-check wb-card__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+        <h3 class="wb-card__title">BOM 三方交叉核对</h3>
+      </div>
+      <p class="wb-card__lede">以 PCB 封装、原理图标注值与物料总表编码为基准，逐条核对 BOM 的封装、位号、用量与物料编码。</p>
+      <ul class="wb-points">
+        <li class="wb-point">
+          <svg class="lucide lucide-check wb-point__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+          <span>9 类规则：封装不符 / 名称与总表不符 / 位号缺失 / 位号不存在 / 用量≠位号数 / 缺编码 / 编码不存在 / 位号格式 / 项次跳号</span>
+        </li>
+        <li class="wb-point">
+          <svg class="lucide lucide-check wb-point__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+          <span>先校验 PCB 与原理图位号集合一致，再作为同一基准使用</span>
+        </li>
+        <li class="wb-point">
+          <svg class="lucide lucide-check wb-point__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+          <span>输出 4 个 Sheet：原 BOM 高亮 / 问题清单 / 位号对照 / 值比对（需确认）</span>
+        </li>
+      </ul>
+      <div class="wb-card__foot">
+        <span class="wb-card__meta" data-bind="check-meta">尚未执行核对</span>
+        <a href="/check/setup" class="wb-btn wb-btn--primary">
+          <span>开始核对</span>
+          <svg class="lucide lucide-arrow-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </article>
+
+    <article class="wb-card">
+      <div class="wb-card__head">
+        <svg class="lucide lucide-file-spreadsheet wb-card__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/></svg>
+        <h3 class="wb-card__title">BOM 生成</h3>
+      </div>
+      <p class="wb-card__lede">从原理图与 PCB 提取位号、规格和实际封装，匹配物料总表并按模板生成可追溯的 BOM。</p>
+      <ul class="wb-points">
+        <li class="wb-point">
+          <svg class="lucide lucide-check wb-point__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+          <span>规格优先级：原理图 Value ＞ Comment ＞ 器件描述</span>
+        </li>
+        <li class="wb-point">
+          <svg class="lucide lucide-check wb-point__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+          <span>封装优先级：PCB 实际 PATTERN ＞ 原理图 PCB 模型 ＞ 库引用推断</span>
+        </li>
+        <li class="wb-point">
+          <svg class="lucide lucide-check wb-point__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+          <span>未匹配项仍保留在 BOM 中并标记『待确认』，不强行匹配</span>
+        </li>
+      </ul>
+      <div class="wb-card__foot">
+        <span class="wb-card__meta" data-bind="gen-meta">尚未执行生成</span>
+        <a href="/gen/setup" class="wb-btn wb-btn--ghost">
+          <svg class="lucide lucide-arrow-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          <span>开始生成</span>
+        </a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="wb-metrics" aria-label="运行指标" data-render="metrics"></section>
+
+<section class="wb-section wb-section--card" aria-labelledby="wbTasksTitle">
+  <div class="wb-head wb-head--split">
+    <h2 class="wb-title" id="wbTasksTitle">最近任务</h2>
+    <a href="/library" class="wb-textbtn">物料库与模板</a>
+  </div>
+  <div class="wb-table-wrap" data-render="tasks"></div>
+</section>
+
+<section class="wb-section wb-section--card" aria-labelledby="wbDistTitle">
+  <div class="wb-head">
+    <h2 class="wb-title" id="wbDistTitle">上次核对问题分布</h2>
+    <p class="wb-desc" data-bind="dist-desc">尚未执行核对</p>
+  </div>
+  <div class="wb-dist" data-render="distribution"></div>
+</section>
+{% endblock %}
+
+{% block status_context %}本地工作区{% endblock %}
+
+{% block page_script %}
+<script src="/assets/pages/workbench.js"></script>
+{% endblock %}

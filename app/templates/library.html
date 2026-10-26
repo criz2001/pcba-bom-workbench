@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}物料库与模板 · PCBA BOM 工作台{% endblock %}
+
+{% block crumb %}
+<span>物料库</span>
+<svg class="lucide lucide-chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+<span data-current="true">物料总表与模板</span>
+{% endblock %}
+
+{% block page_title %}物料库与模板{% endblock %}
+
+{% block toolbar_actions %}
+<button type="button" class="lib-btn lib-btn--ghost" data-action="import-master">
+  <svg class="lucide lucide-upload" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+  导入物料总表
+</button>
+<button type="button" class="lib-btn lib-btn--primary" data-action="refresh">
+  <svg class="lucide lucide-refresh-cw" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+  刷新
+</button>
+{% endblock %}
+
+{% block page_body %}
+<section class="lib-section" aria-label="物料库指标">
+  <div class="lib-metrics" data-render="metrics"></div>
+</section>
+
+<section class="lib-section" aria-labelledby="libTableTitle">
+  <div class="lib-card">
+    <div class="lib-head">
+      <h2 class="lib-title" id="libTableTitle">物料总表</h2>
+      <p class="lib-desc">提供物料编码基准，用于 BOM 的「编码不存在」与「名称与总表不符」两类核对。</p>
+    </div>
+
+    <div class="lib-toolbar">
+      <div class="lib-toolbar__left">
+        <input type="search" class="lib-search" data-render="search" placeholder="搜索物料编码 / 名称 / 规格型号" aria-label="搜索物料编码 / 名称 / 规格型号">
+        <div class="lib-filters" role="group" aria-label="物料数据状态筛选" data-render="filters"></div>
+      </div>
+      <div class="lib-toolbar__actions">
+        <button type="button" class="lib-btn lib-btn--ghost" data-action="import-master">
+          <svg class="lucide lucide-upload" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+          导入总表
+        </button>
+      </div>
+    </div>
+
+    <p class="lib-ready" role="status" data-render="ready" data-visible="false"></p>
+
+    <div class="lib-table-wrap" data-render="table"></div>
+
+    <div class="lib-pager" data-render="pager"></div>
+  </div>
+</section>
+
+<section class="lib-section" aria-labelledby="libTplTitle">
+  <div class="lib-card">
+    <div class="lib-head">
+      <h2 class="lib-title" id="libTplTitle">BOM 模板</h2>
+      <p class="lib-desc">模板只决定列结构、字段名称、格式与固定值。</p>
+    </div>
+    <div class="lib-tpl-grid" data-render="templates"></div>
+  </div>
+</section>
+
+<section class="lib-section" aria-label="上传物料总表与模板">
+  <div data-render="drops"></div>
+</section>
+{% endblock %}
+
+{% block status_context %}物料库{% endblock %}
+
+{% block page_script %}
+<script src="/assets/pages/library.js"></script>
+{% endblock %}

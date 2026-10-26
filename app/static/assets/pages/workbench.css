@@ -1,0 +1,568 @@
+/* 由设计稿 workbench.html 抽取，请勿手工微调；改设计请改设计稿后重新运行 tools/extract_css.py */
+/* ---- inline ---- */
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    
+/* ---- critical-layout ---- */
+        /* ==========================================================================
+           工作台（page-workbench）私有静态布局
+           目标：不依赖 Tailwind 运行时编译，页面骨架依旧成立
+           断点：1280 / 1024 / 768
+           ========================================================================== */
+
+        main {
+          padding: 16px;
+          min-width: 0;
+        }
+
+        /* ---------- 区块骨架 ---------- */
+        .wb-section {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          min-width: 0;
+        }
+
+        .wb-section--card {
+          padding: 16px;
+          border: 1px solid var(--bom-border);
+          border-radius: var(--bom-radius-lg);
+          background: var(--bom-card);
+        }
+
+        .wb-head {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          min-width: 0;
+        }
+
+        .wb-head--split {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          flex-wrap: wrap;
+        }
+
+        .wb-title {
+          margin: 0;
+          font-size: var(--bom-text-h2);
+          font-weight: 600;
+          line-height: 1.3;
+          color: var(--bom-foreground);
+          word-break: keep-all;
+          overflow-wrap: break-word;
+        }
+
+        .wb-desc {
+          margin: 0;
+          font-size: 12px;
+          line-height: 1.5;
+          color: var(--bom-muted-foreground);
+        }
+
+        /* ---------- A. 功能入口：2 列 → 单列 ---------- */
+        .wb-entry-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 16px;
+          align-items: stretch;
+        }
+
+        .wb-card {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          padding: 16px;
+          min-width: 0;
+          border: 1px solid var(--bom-border);
+          border-radius: var(--bom-radius-lg);
+          background: var(--bom-card);
+        }
+
+        .wb-card__head {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          min-width: 0;
+        }
+
+        .wb-card__icon {
+          width: 20px;
+          height: 20px;
+          color: var(--bom-primary);
+          flex: 0 0 auto;
+        }
+
+        .wb-card__title {
+          margin: 0;
+          font-size: var(--bom-text-h3);
+          font-weight: 600;
+          line-height: 1.4;
+          color: var(--bom-foreground);
+          word-break: keep-all;
+          overflow-wrap: break-word;
+        }
+
+        .wb-card__lede {
+          margin: 0;
+          font-size: 13px;
+          line-height: 1.65;
+          color: var(--bom-muted-foreground);
+        }
+
+        .wb-points {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+        }
+
+        .wb-point {
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+          min-width: 0;
+          font-size: 13px;
+          line-height: 1.6;
+          color: var(--bom-muted-foreground);
+        }
+
+        .wb-point > span {
+          min-width: 0;
+          overflow-wrap: break-word;
+        }
+
+        .wb-point__icon {
+          width: 14px;
+          height: 14px;
+          margin-top: 3px;
+          color: var(--bom-muted-foreground);
+          flex: 0 0 auto;
+        }
+
+        .wb-card__foot {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          flex-wrap: wrap;
+          margin-top: auto;
+          padding-top: 12px;
+          border-top: 1px solid var(--bom-border);
+        }
+
+        .wb-card__meta {
+          font-size: 12px;
+          color: var(--bom-subtle);
+          min-width: 0;
+        }
+
+        /* ---------- 按钮（整页仅 1 个主按钮） ---------- */
+        .wb-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          height: 32px;
+          padding: 0 12px;
+          border-radius: var(--bom-radius-md);
+          font-family: var(--bom-font-sans);
+          font-size: 13px;
+          font-weight: 500;
+          line-height: 1;
+          white-space: nowrap;
+          text-decoration: none;
+          cursor: pointer;
+          transition: background-color 140ms cubic-bezier(.2, .8, .2, 1),
+            border-color 140ms cubic-bezier(.2, .8, .2, 1),
+            color 140ms cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .wb-btn i[data-lucide],
+        .wb-btn svg {
+          width: 16px;
+          height: 16px;
+          flex: 0 0 auto;
+          transition: transform 140ms cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .wb-btn--primary {
+          border: 1px solid var(--bom-primary);
+          background: var(--bom-primary);
+          color: var(--bom-primary-foreground);
+          font-weight: 600;
+        }
+
+        .wb-btn--primary:hover {
+          border-color: var(--bom-primary-strong);
+          background: var(--bom-primary-strong);
+        }
+
+        .wb-btn--primary:hover i[data-lucide],
+        .wb-btn--primary:hover svg {
+          transform: translateX(2px);
+        }
+
+        .wb-btn--primary:active {
+          border-color: var(--bom-primary-strong);
+          background: var(--bom-primary-strong);
+        }
+
+        .wb-btn--ghost {
+          border: 1px solid var(--bom-border-strong);
+          background: transparent;
+          color: var(--bom-foreground);
+        }
+
+        .wb-btn--ghost:hover {
+          border-color: var(--bom-primary-line);
+          background: var(--bom-surface-2);
+        }
+
+        .wb-btn--ghost:active {
+          background: var(--bom-surface-3);
+        }
+
+        .wb-btn:focus-visible {
+          outline: 2px solid var(--bom-ring);
+          outline-offset: 2px;
+        }
+
+        /* ---------- 文字按钮 ---------- */
+        .wb-textbtn {
+          display: inline-flex;
+          align-items: center;
+          height: 26px;
+          padding: 0 8px;
+          border-radius: var(--bom-radius-sm);
+          font-size: 12px;
+          color: var(--bom-muted-foreground);
+          text-decoration: none;
+          white-space: nowrap;
+          transition: color 140ms cubic-bezier(.2, .8, .2, 1),
+            background-color 140ms cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .wb-textbtn:hover {
+          background: var(--bom-primary-soft);
+          color: var(--bom-primary);
+        }
+
+        .wb-textbtn:active {
+          background: var(--bom-surface-2);
+        }
+
+        /* ---------- B. 运行指标带（分隔线，非卡片墙） ---------- */
+        .wb-metrics {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          border: 1px solid var(--bom-border);
+          border-radius: var(--bom-radius-lg);
+          background: var(--bom-surface);
+          overflow: hidden;
+        }
+
+        .wb-metrics__item {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          min-width: 0;
+          padding: 16px;
+          border-left: 1px solid var(--bom-border);
+        }
+
+        .wb-metrics__item:first-child {
+          border-left: none;
+        }
+
+        .wb-metrics__value {
+          font-size: 26px;
+          font-weight: 600;
+          line-height: 1.15;
+          color: var(--bom-foreground);
+          white-space: nowrap;
+        }
+
+        .wb-metrics__value--primary {
+          color: var(--bom-primary);
+        }
+
+        .wb-metrics__label {
+          font-size: 12px;
+          color: var(--bom-muted-foreground);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .wb-metrics__sub {
+          font-size: 11px;
+          color: var(--bom-subtle);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        /* ---------- C. 最近任务表 ---------- */
+        .wb-table-wrap {
+          width: 100%;
+          min-width: 0;
+          overflow-x: auto;
+        }
+
+        .wb-table {
+          width: 100%;
+          min-width: 720px;
+          border-collapse: collapse;
+        }
+
+        .wb-table th {
+          padding: 0 12px 8px;
+          border-bottom: 1px solid var(--bom-border);
+          font-size: 12px;
+          font-weight: 500;
+          color: var(--bom-muted-foreground);
+          text-align: left;
+          white-space: nowrap;
+        }
+
+        .wb-table td {
+          padding: 12px;
+          border-bottom: 1px solid var(--bom-border);
+          font-size: 13px;
+          color: var(--bom-foreground);
+          vertical-align: middle;
+        }
+
+        .wb-table th:first-child,
+        .wb-table td:first-child {
+          padding-left: 0;
+        }
+
+        .wb-table th:last-child,
+        .wb-table td:last-child {
+          padding-right: 0;
+        }
+
+        .wb-table td:nth-child(1),
+        .wb-table td:nth-child(3),
+        .wb-table td:nth-child(4),
+        .wb-table td:nth-child(5) {
+          white-space: nowrap;
+        }
+
+        .wb-table tbody tr {
+          transition: background-color 140ms cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .wb-table tbody tr:hover {
+          background: var(--bom-surface-2);
+        }
+
+        .wb-table tbody tr:last-child td {
+          border-bottom: none;
+        }
+
+        .wb-tag {
+          display: inline-flex;
+          align-items: center;
+          height: 22px;
+          padding: 0 8px;
+          border-radius: var(--bom-radius-sm);
+          background: var(--bom-surface-2);
+          color: var(--bom-muted-foreground);
+          font-size: 12px;
+          white-space: nowrap;
+        }
+
+        .wb-file-sep {
+          color: var(--bom-subtle);
+        }
+
+        /* ---------- D. 问题分布 ---------- */
+        .wb-dist {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .wb-dist__row {
+          display: grid;
+          grid-template-columns: 160px 56px minmax(0, 1fr) 56px 56px;
+          align-items: center;
+          gap: 12px;
+          min-width: 0;
+        }
+
+        .wb-dist__name {
+          font-size: 13px;
+          color: var(--bom-foreground);
+          min-width: 0;
+          word-break: keep-all;
+          overflow-wrap: break-word;
+        }
+
+        .wb-level {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          justify-self: start;
+          height: 20px;
+          padding: 0 6px;
+          border-radius: var(--bom-radius-sm);
+          font-size: 11px;
+          white-space: nowrap;
+        }
+
+        .wb-level--error {
+          background: var(--bom-state-error-soft);
+          color: var(--bom-state-error);
+        }
+
+        .wb-level--warning {
+          background: var(--bom-state-warning-soft);
+          color: var(--bom-state-warning);
+        }
+
+        .wb-bar {
+          display: block;
+          height: 8px;
+          min-width: 0;
+          border-radius: var(--bom-radius-full);
+          background: var(--bom-surface-2);
+          overflow: hidden;
+        }
+
+        .wb-bar__fill {
+          display: block;
+          width: 0;
+          height: 100%;
+          border-radius: var(--bom-radius-full);
+          background: var(--bom-primary);
+        }
+
+        .wb-dist__count,
+        .wb-dist__pct {
+          font-size: 12px;
+          text-align: right;
+          font-variant-numeric: tabular-nums;
+          white-space: nowrap;
+        }
+
+        .wb-dist__count {
+          color: var(--bom-muted-foreground);
+        }
+
+        .wb-dist__pct {
+          color: var(--bom-subtle);
+        }
+
+        /* ---------- 断点 1280 ---------- */
+        @media (max-width: 1280px) {
+          .wb-metrics__item {
+            padding: 14px;
+          }
+        }
+
+        /* ---------- 断点 1024：双卡片单列、指标 2×2 ---------- */
+        @media (max-width: 1024px) {
+          .wb-entry-grid {
+            grid-template-columns: minmax(0, 1fr);
+          }
+
+          .wb-metrics {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+
+          .wb-metrics__item:nth-child(odd) {
+            border-left: none;
+          }
+
+          .wb-metrics__item:nth-child(n + 3) {
+            border-top: 1px solid var(--bom-border);
+          }
+        }
+
+        /* ---------- 断点 768：指标单列、分布行折成两行 ---------- */
+        @media (max-width: 768px) {
+          main {
+            padding: 8px;
+          }
+
+          .wb-metrics {
+            grid-template-columns: minmax(0, 1fr);
+          }
+
+          .wb-metrics__item {
+            border-left: none;
+          }
+
+          .wb-metrics__item:nth-child(n + 2) {
+            border-top: 1px solid var(--bom-border);
+          }
+
+          .wb-dist__row {
+            grid-template-columns: minmax(0, 1fr) 56px 56px;
+            grid-template-areas:
+              "name name level"
+              "bar count pct";
+            column-gap: 12px;
+            row-gap: 8px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--bom-border);
+          }
+
+          .wb-dist__row:last-child {
+            padding-bottom: 0;
+            border-bottom: none;
+          }
+
+          .wb-dist__name {
+            grid-area: name;
+          }
+
+          .wb-level {
+            grid-area: level;
+            justify-self: end;
+          }
+
+          .wb-bar {
+            grid-area: bar;
+          }
+
+          .wb-dist__count {
+            grid-area: count;
+          }
+
+          .wb-dist__pct {
+            grid-area: pct;
+          }
+        }
+
+        /* ---------- 动效降级 ---------- */
+        @media (prefers-reduced-motion: reduce) {
+          .wb-btn,
+          .wb-btn i[data-lucide],
+          .wb-btn svg,
+          .wb-textbtn,
+          .wb-table tbody tr {
+            transition-duration: 0.01ms;
+          }
+        }
+      

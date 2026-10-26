@@ -1,0 +1,469 @@
+/* 由设计稿 partials/project-shell.html 抽取 —— 共享应用外壳样式 */
+
+/* ---- shell-critical-layout ---- */
+  /* ---------- 外壳根容器：随内容自然增高，禁止锁定高度 / 禁止 overflow:hidden ---------- */
+  .app-window {
+    max-width: 1480px;
+    margin: 0 auto;
+    border: 1px solid var(--bom-border);
+    border-radius: var(--bom-radius-lg);
+    background: var(--bom-background);
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    color: var(--bom-foreground);
+    font-family: var(--bom-font-sans);
+    font-size: var(--bom-text-body);
+  }
+
+  /* ---------- 状态圆点 ---------- */
+  .app-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: var(--bom-radius-full);
+    background: var(--bom-state-success);
+    flex: 0 0 auto;
+  }
+
+  .app-dot--sm {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* ---------- 标题栏 ---------- */
+  .app-titlebar {
+    height: 44px;
+    flex: 0 0 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--bom-border);
+    background: var(--bom-surface);
+    border-radius: var(--bom-radius-lg) var(--bom-radius-lg) 0 0;
+  }
+
+  .app-titlebar__left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .app-titlebar__mark {
+    width: 16px;
+    height: 16px;
+    color: var(--bom-primary);
+    flex: 0 0 auto;
+  }
+
+  .app-titlebar__name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--bom-foreground);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  .app-titlebar__project {
+    background: var(--bom-surface-2);
+    color: var(--bom-muted-foreground);
+    border-radius: var(--bom-radius-sm);
+    padding: 2px 8px;
+    font-size: var(--bom-text-caption);
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
+  .app-titlebar__center {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--bom-text-caption);
+    color: var(--bom-muted-foreground);
+    min-width: 0;
+  }
+
+  .app-titlebar__meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .app-titlebar__sep {
+    width: 1px;
+    height: 12px;
+    background: var(--bom-border);
+    flex: 0 0 auto;
+  }
+
+  .app-titlebar__controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--bom-subtle);
+    flex: 0 0 auto;
+  }
+
+  .app-titlebar__control,
+  .app-titlebar__controls svg {
+    width: 14px;
+    height: 14px;
+    transition: color 140ms cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .app-titlebar__control:hover,
+  .app-titlebar__controls svg:hover {
+    color: var(--bom-muted-foreground);
+  }
+
+  /* ---------- 主体：内容自然撑高，窗口高度随内容增长 ---------- */
+  .app-body {
+    display: flex;
+    align-items: stretch;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  /* ---------- 左侧导航 ---------- */
+  .app-sidebar {
+    width: 240px;
+    flex: 0 0 240px;
+    border-right: 1px solid var(--bom-border);
+    background: var(--bom-background-deep);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 12px;
+    min-width: 0;
+  }
+
+  .app-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .app-nav__label {
+    margin: 0 0 6px;
+    padding: 0 10px;
+    font-size: var(--bom-text-micro);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--bom-subtle);
+  }
+
+  .app-nav__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: var(--bom-radius-md);
+    color: var(--bom-muted-foreground);
+    font-size: var(--bom-text-body);
+    text-decoration: none;
+    transition: background-color 140ms cubic-bezier(.2, .8, .2, 1),
+      color 140ms cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .app-nav__item i[data-lucide],
+  .app-nav__item svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+  }
+
+  .app-nav__item span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .app-nav__item:hover {
+    background: var(--bom-surface-2);
+    color: var(--bom-foreground);
+  }
+
+  .app-nav__item:focus-visible {
+    outline: 2px solid var(--bom-ring);
+    outline-offset: 2px;
+  }
+
+  /* 激活态唯一强调方式：由父级提供，叶子页只负责打 data-active 标记 */
+  [data-nav-key][data-active="true"] {
+    background: var(--bom-primary-soft);
+    color: var(--bom-primary);
+  }
+
+  /* ---------- 导航下方状态信息 ---------- */
+  .app-sidebar__foot {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--bom-border);
+    min-width: 0;
+  }
+
+  .app-sidebar__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--bom-text-caption);
+    min-width: 0;
+  }
+
+  .app-sidebar__row-label {
+    color: var(--bom-subtle);
+    white-space: nowrap;
+  }
+
+  .app-sidebar__row-value {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--bom-muted-foreground);
+    white-space: nowrap;
+  }
+
+  /* ---------- 内容列 ---------- */
+  .app-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .app-toolbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 16px 24px 12px;
+    border-bottom: 1px solid var(--bom-border);
+    background: var(--bom-background);
+  }
+
+  .app-toolbar__left {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .app-crumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--bom-text-caption);
+    color: var(--bom-subtle);
+    min-width: 0;
+  }
+
+  .app-crumb [data-current="true"] {
+    color: var(--bom-muted-foreground);
+  }
+
+  .app-crumb i[data-lucide],
+  .app-crumb svg {
+    width: 12px;
+    height: 12px;
+    flex: 0 0 auto;
+  }
+
+  .app-page-title {
+    margin: 0;
+    font-size: var(--bom-text-h1);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--bom-foreground);
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  .app-toolbar__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  /* ---------- 页面主体 ---------- */
+  .app-main {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+  }
+
+  /* ---------- 底部状态栏 ---------- */
+  .app-statusbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    border-top: 1px solid var(--bom-border);
+    padding: 8px 24px;
+    font-size: var(--bom-text-caption);
+    background: var(--bom-surface);
+    border-radius: 0 0 var(--bom-radius-lg) var(--bom-radius-lg);
+  }
+
+  .app-statusbar__left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--bom-muted-foreground);
+    min-width: 0;
+  }
+
+  .app-statusbar__right {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px;
+    color: var(--bom-subtle);
+    min-width: 0;
+  }
+
+  /* ---------- 响应式：窄窗口收成图标轨道 ---------- */
+  @media (max-width: 1023px) {
+    .app-sidebar {
+      width: 64px;
+      flex-basis: 64px;
+      padding: 12px 8px;
+    }
+
+    .app-nav__item {
+      justify-content: center;
+      padding: 0;
+    }
+
+    .app-nav__item span {
+      display: none;
+    }
+
+    /* 标签与状态明细在轨道宽度下无容身空间；其信息在底部状态栏中同样可见 */
+    .app-nav__label,
+    .app-sidebar__foot {
+      display: none;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .app-main {
+      padding: 16px;
+    }
+
+    .app-toolbar {
+      padding: 12px 16px 10px;
+    }
+
+    .app-statusbar {
+      padding: 8px 16px;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .app-titlebar__center {
+      display: none;
+    }
+  }
+
+  /* ---------- 动效降级 ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .app-nav__item,
+    .app-titlebar__control,
+    .app-titlebar__controls svg {
+      transition-duration: 0.01ms;
+    }
+  }
+
+
+/* ---- icon-discipline ---- */
+  /* ---------- 图标统一规则：Lucide 单描边 1.5px，并禁止被 flex 压缩变形 ---------- */
+  .app-window svg.lucide,
+  .app-window i[data-lucide] {
+    stroke-width: 1.5;
+    flex: 0 0 auto;
+  }
+
+
+/* ---- theme-toggle ---- */
+  /* ---------- 亮色 / 暗色主题切换按钮（默认亮色，取 --bom-* 令牌） ---------- */
+  .app-titlebar__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+  }
+
+  .app-titlebar__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex: 0 0 auto;
+    padding: 0;
+    border: 1px solid var(--bom-border);
+    border-radius: var(--bom-radius-md);
+    background: transparent;
+    color: var(--bom-muted-foreground);
+    cursor: pointer;
+    transition: background-color 140ms cubic-bezier(.2, .8, .2, 1),
+      color 140ms cubic-bezier(.2, .8, .2, 1),
+      border-color 140ms cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .app-titlebar__toggle:hover {
+    background: var(--bom-surface-3);
+    border-color: var(--bom-border-strong);
+    color: var(--bom-foreground);
+  }
+
+  .app-titlebar__toggle:focus-visible {
+    outline: 2px solid var(--bom-ring);
+    outline-offset: 2px;
+  }
+
+  .app-titlebar__toggle i[data-lucide],
+  .app-titlebar__toggle svg {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 auto;
+  }
+
+  .app-titlebar__toggle-moon {
+    display: none;
+  }
+
+  html.dark .app-titlebar__toggle-sun {
+    display: none;
+  }
+
+  html.dark .app-titlebar__toggle-moon {
+    display: block;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .app-titlebar__toggle {
+      transition-duration: 0.01ms;
+    }
+  }
+

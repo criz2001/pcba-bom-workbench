@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}BOM 校对 · 核对结果 · PCBA BOM 工作台{% endblock %}
+
+{% block crumb %}
+<span>BOM 校对</span>
+<svg class="lucide lucide-chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+<span><a href="/check/setup" style="text-decoration:none">文件与规则</a></span>
+<svg class="lucide lucide-chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+<span data-current="true">核对结果</span>
+{% endblock %}
+
+{% block page_title %}BOM 校对 · 核对结果{% endblock %}
+
+{% block toolbar_actions %}
+<a href="/check/setup" class="cr-btn" data-action="rerun">
+  <svg class="lucide lucide-rotate-ccw" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+  重新核对
+</a>
+<a href="#" class="cr-btn" data-action="download">
+  <svg class="lucide lucide-download" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+  导出报告
+</a>
+<button type="button" class="cr-btn" data-desktop-only hidden data-action="open-output">
+  <svg class="lucide lucide-folder-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg>
+  打开输出目录
+</button>
+<a href="/gen/setup" class="cr-btn cr-btn--primary" data-action="to-generate">
+  继续生成 BOM
+  <svg class="lucide lucide-arrow-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+</a>
+{% endblock %}
+
+{% block page_body %}
+<section class="cr-band" aria-label="核对结果概览" data-render="band"></section>
+
+<section class="cr-card" aria-labelledby="cr-dist-title" data-section="distribution">
+  <div class="cr-card__head">
+    <h2 id="cr-dist-title" class="cr-card__title">问题分布</h2>
+    <p class="cr-card__sub">按 9 类核对规则汇总</p>
+  </div>
+  <ul class="cr-dist" data-render="distribution"></ul>
+</section>
+
+<section class="cr-card" aria-labelledby="cr-list-title" data-section="problems">
+  <div class="cr-card__head">
+    <h2 id="cr-list-title" class="cr-card__title">问题清单</h2>
+    <p class="cr-card__sub">按级别排序，未匹配项已保留并给出处理建议</p>
+  </div>
+
+  <div class="cr-toolbar">
+    <div class="cr-chips" role="group" aria-label="按级别筛选" data-render="chips"></div>
+    <div class="cr-toolbar__end">
+      <input type="search" class="cr-search" data-render="search" aria-label="搜索位号 / 编码 / 问题类型" placeholder="搜索位号 / 编码 / 问题类型">
+      <button type="button" class="cr-btn" data-action="download">
+        <svg class="lucide lucide-download" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+        导出 Excel
+      </button>
+    </div>
+  </div>
+
+  <div class="cr-table-wrap" data-render="problems"></div>
+</section>
+
+<div class="cr-summary" data-section="summary">
+  <section class="cr-card" aria-labelledby="cr-missing-title">
+    <div class="cr-card__head">
+      <h2 id="cr-missing-title" class="cr-card__title">位号缺失明细</h2>
+      <p class="cr-card__sub">PCB ∪ 原理图有此位号，BOM 未列</p>
+    </div>
+    <ul class="cr-badges" data-render="missing"></ul>
+  </section>
+
+  <section class="cr-card" aria-labelledby="cr-value-title">
+    <div class="cr-card__head">
+      <h2 id="cr-value-title" class="cr-card__title">值比对（需确认）</h2>
+      <p class="cr-card__sub">供参考，不计入严重问题</p>
+    </div>
+    <ul class="cr-values" data-render="values"></ul>
+    <p class="cr-values__note">
+      <svg class="lucide lucide-info" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <span>原理图与 BOM 常非同一版次，值差异仅作提示，不判为严重问题。</span>
+    </p>
+  </section>
+</div>
+{% endblock %}
+
+{% block overlay %}{% endblock %}
+
+{% block status_context %}等待核对结果{% endblock %}
+
+{% block page_script %}
+<script src="/assets/pages/check_result.js"></script>
+{% endblock %}

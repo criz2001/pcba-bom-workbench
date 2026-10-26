@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}BOM 生成 · 生成结果 · PCBA BOM 工作台{% endblock %}
+
+{% block crumb %}
+<span>BOM 生成</span>
+<svg class="lucide lucide-chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+<span><a href="/gen/setup" style="text-decoration:none">文件与模板</a></span>
+<svg class="lucide lucide-chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+<span data-current="true">生成结果</span>
+{% endblock %}
+
+{% block page_title %}BOM 生成 · 生成结果{% endblock %}
+
+{% block toolbar_actions %}
+<a href="/gen/setup" class="gen-btn">
+  <svg class="lucide lucide-arrow-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+  返回调整设置
+</a>
+<button type="button" class="gen-btn" data-action="download-pending">
+  <svg class="lucide lucide-file-plus" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M9 15h6"/><path d="M12 18v-6"/></svg>
+  导出待确认清单
+</button>
+<button type="button" class="gen-btn" data-desktop-only hidden data-action="open-output">
+  <svg class="lucide lucide-folder-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg>
+  打开输出目录
+</button>
+<button type="button" class="gen-btn gen-btn--primary" data-action="download">
+  <svg class="lucide lucide-download" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+  导出 BOM.xlsx
+</button>
+{% endblock %}
+
+{% block page_body %}
+<div class="gen-metrics-block">
+  <section class="gen-metrics" aria-label="生成结果指标" data-render="metrics"></section>
+  <p class="gen-note" data-render="note"></p>
+</div>
+
+<section class="gen-card" aria-label="BOM 预览">
+  <div class="gen-card__head">
+    <h2 class="gen-card__title">BOM 预览</h2>
+    <p class="gen-card__sub">列顺序与字段名称来自模板；待确认行以琥珀底色标出并在备注列写明原因</p>
+  </div>
+  <div class="bom-table-wrap" data-render="preview"></div>
+</section>
+
+<section class="gen-card" aria-label="待确认项">
+  <div class="gen-card__head">
+    <h2 class="gen-card__title">待确认项</h2>
+    <p class="gen-card__sub">未匹配项仍保留在 BOM 中，需人工指定编码或确认版本</p>
+  </div>
+  <div class="gen-issues" data-render="issues"></div>
+  <div class="gen-card__foot">
+    <a href="/library" class="gen-btn">
+      <svg class="lucide lucide-database" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
+      去物料库补充编码
+    </a>
+  </div>
+</section>
+
+<section class="gen-card" aria-label="输出前校验">
+  <div class="gen-card__head">
+    <h2 class="gen-card__title">输出前校验</h2>
+    <p class="gen-card__sub">生成后自动执行的检查项</p>
+  </div>
+  <div class="gen-checks" data-render="checks"></div>
+</section>
+
+<section class="gen-export" aria-label="导出">
+  <p class="gen-export__text" data-render="export-text">—</p>
+  <div class="gen-export__actions">
+    <button type="button" class="gen-btn" data-action="download-pending">
+      <svg class="lucide lucide-list-checks" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/></svg>
+      导出待确认清单
+    </button>
+    <button type="button" class="gen-btn" data-action="copy-codes">
+      <svg class="lucide lucide-copy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+      复制全部物料编码
+    </button>
+  </div>
+</section>
+{% endblock %}
+
+{% block status_context %}生成结果{% endblock %}
+
+{% block page_script %}
+<script src="/assets/pages/gen_result.js"></script>
+{% endblock %}

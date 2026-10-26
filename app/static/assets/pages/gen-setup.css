@@ -1,0 +1,796 @@
+/* 由设计稿 gen-setup.html 抽取，请勿手工微调；改设计请改设计稿后重新运行 tools/extract_css.py */
+/* ---- inline ---- */
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    
+/* ---- critical-layout ---- */
+      /* ======================================================================
+         页面静态布局（BOM 生成 · 文件与模板）
+         仅使用 colors_and_type.css 的 --bom-* 令牌；两列骨架与断点在此固化，
+         不依赖 Tailwind 运行时编译即可保持结构稳定。
+         ====================================================================== */
+
+      /* ---------- 页面根：自然流式，禁止锁定视口高度 ---------- */
+      .gs-page {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        min-width: 0;
+        color: var(--bom-foreground);
+      }
+
+      /* ---------- 主区两列：≥1280 58/42；1024–1280 56/44；<1024 单列 ---------- */
+      .gs-columns {
+        display: grid;
+        grid-template-columns: minmax(0, 58fr) minmax(0, 42fr);
+        align-items: start;
+        gap: 16px;
+        min-width: 0;
+      }
+
+      .gs-col {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        min-width: 0;
+      }
+
+      /* ---------- 卡片：描边 + 表面分层，无静态阴影 ---------- */
+      .gs-card {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-width: 0;
+        padding: 16px;
+        border: 1px solid var(--bom-border);
+        border-radius: var(--bom-radius-lg);
+        background: var(--bom-card);
+      }
+
+      .gs-card__head {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .gs-card__title {
+        margin: 0;
+        font-size: var(--bom-text-h2);
+        font-weight: 600;
+        line-height: 1.3;
+        color: var(--bom-foreground);
+        word-break: keep-all;
+        overflow-wrap: break-word;
+      }
+
+      .gs-card__sub {
+        margin: 0;
+        font-size: var(--bom-text-caption);
+        line-height: 1.5;
+        color: var(--bom-subtle);
+        overflow-wrap: break-word;
+      }
+
+      /* ---------- 文件 / 素材槽：40px 描边图标 + 文本 + 右侧状态 ---------- */
+      .gs-slots {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .gs-file {
+        display: grid;
+        grid-template-columns: 40px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        padding: 12px;
+        border: 1px solid var(--bom-border);
+        border-radius: var(--bom-radius-md);
+        background: var(--bom-surface-2);
+      }
+
+      .gs-file__icon,
+      .gs-drop__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid var(--bom-border);
+        border-radius: var(--bom-radius-md);
+        background: var(--bom-surface-2);
+        color: var(--bom-primary);
+        flex: 0 0 auto;
+      }
+
+      .gs-file__body {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .gs-file__name {
+        margin: 0;
+        font-size: 13px;
+        color: var(--bom-foreground);
+        overflow-wrap: anywhere;
+      }
+
+      .gs-file__meta {
+        margin: 0;
+        font-size: var(--bom-text-caption);
+        line-height: 1.5;
+        color: var(--bom-subtle);
+        overflow-wrap: break-word;
+      }
+
+      .gs-file__aside {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 0 0 auto;
+      }
+
+      /* ---------- 虚线空投放区 ---------- */
+      .gs-drop {
+        display: grid;
+        grid-template-columns: 40px minmax(0, 1fr);
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        min-width: 0;
+        padding: 12px;
+        border: 1px dashed var(--bom-border-strong);
+        border-radius: var(--bom-radius-md);
+        background: var(--bom-surface-2);
+        color: var(--bom-muted-foreground);
+        font-family: inherit;
+        text-align: left;
+        cursor: pointer;
+        transition: border-color 140ms cubic-bezier(.2, .8, .2, 1),
+          background-color 140ms cubic-bezier(.2, .8, .2, 1);
+      }
+
+      .gs-drop:hover {
+        border-color: var(--bom-primary-line);
+        background: var(--bom-surface-3);
+      }
+
+      .gs-drop:active {
+        border-color: var(--bom-primary);
+      }
+
+      .gs-drop__icon {
+        color: var(--bom-subtle);
+      }
+
+      .gs-drop__text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .gs-drop__title {
+        font-size: var(--bom-text-body);
+        line-height: 1.5;
+        color: var(--bom-muted-foreground);
+      }
+
+      .gs-drop__note {
+        font-size: var(--bom-text-caption);
+        line-height: 1.5;
+        color: var(--bom-subtle);
+        overflow-wrap: break-word;
+      }
+
+      /* ---------- 表格：外层横向滚动，内表最小宽 640px ---------- */
+      .gs-tablewrap {
+        width: 100%;
+        min-width: 0;
+        overflow-x: auto;
+        border: 1px solid var(--bom-border);
+        border-radius: var(--bom-radius-md);
+        background: var(--bom-card);
+      }
+
+      .gs-table {
+        width: 100%;
+        min-width: 640px;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+      .gs-table th,
+      .gs-table td {
+        padding: 8px 10px;
+        text-align: left;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--bom-border);
+      }
+
+      .gs-table thead th {
+        background: var(--bom-surface-2);
+        color: var(--bom-muted-foreground);
+        font-size: var(--bom-text-micro);
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .gs-table tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .gs-table tbody tr:hover td {
+        background: var(--bom-surface-2);
+      }
+
+      .gs-table td {
+        color: var(--bom-foreground);
+        font-size: var(--bom-text-caption);
+        overflow-wrap: break-word;
+      }
+
+      .gs-map__col {
+        color: var(--bom-muted-foreground);
+        white-space: nowrap;
+      }
+
+      .gs-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+
+      .gs-cell__sub {
+        font-size: var(--bom-text-micro);
+        color: var(--bom-subtle);
+        overflow-wrap: break-word;
+      }
+
+      /* ---------- 列宽分配：提取结果预览 10/24/18/18/16/14；模板列映射 34/66 ---------- */
+      .gs-table--extract col:nth-child(1) {
+        width: 10%;
+      }
+
+      .gs-table--extract col:nth-child(2) {
+        width: 24%;
+      }
+
+      .gs-table--extract col:nth-child(3) {
+        width: 18%;
+      }
+
+      .gs-table--extract col:nth-child(4) {
+        width: 18%;
+      }
+
+      .gs-table--extract col:nth-child(5) {
+        width: 16%;
+      }
+
+      .gs-table--extract col:nth-child(6) {
+        width: 14%;
+      }
+
+      .gs-table--map col:nth-child(1) {
+        width: 34%;
+      }
+
+      .gs-table--map col:nth-child(2) {
+        width: 66%;
+      }
+
+      /* ---------- 表格说明文字：仅供读屏，不占用视觉布局 ---------- */
+      .gs-table caption {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* ---------- 确认条提示图标：仅作提示语义，用 info 状态色 ---------- */
+      .gs-confirm__info {
+        color: var(--bom-state-info);
+      }
+
+      /* 取值依据存在字段冲突：warning 软底 + warning 文字 */
+      .gs-table tbody tr td.gs-td--warn,
+      .gs-table tbody tr:hover td.gs-td--warn {
+        background: var(--bom-state-warning-soft);
+        color: var(--bom-state-warning);
+      }
+
+      /* ---------- 输出设置：分组 + 组间 1px 分隔 ---------- */
+      .gs-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .gs-group + .gs-group {
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--bom-border);
+      }
+
+      .gs-group__title {
+        margin: 0;
+        font-size: var(--bom-text-caption);
+        font-weight: 600;
+        line-height: 1.3;
+        color: var(--bom-muted-foreground);
+      }
+
+      .gs-group__note {
+        margin: 0;
+        font-size: var(--bom-text-micro);
+        line-height: 1.5;
+        color: var(--bom-subtle);
+        overflow-wrap: break-word;
+      }
+
+      /* 单选：可聚焦 button，覆盖 hover / active / focus-visible */
+      .gs-radios {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .gs-radio {
+        display: grid;
+        grid-template-columns: 16px minmax(0, 1fr);
+        align-items: start;
+        gap: 8px;
+        width: 100%;
+        min-width: 0;
+        padding: 8px 10px;
+        border: 1px solid transparent;
+        border-radius: var(--bom-radius-md);
+        background: transparent;
+        color: var(--bom-muted-foreground);
+        font-family: inherit;
+        text-align: left;
+        cursor: pointer;
+        transition: background-color 140ms cubic-bezier(.2, .8, .2, 1),
+          border-color 140ms cubic-bezier(.2, .8, .2, 1),
+          color 140ms cubic-bezier(.2, .8, .2, 1);
+      }
+
+      .gs-radio:hover {
+        border-color: var(--bom-border);
+        background: var(--bom-surface-2);
+        color: var(--bom-foreground);
+      }
+
+      .gs-radio:active {
+        background: var(--bom-surface-3);
+      }
+
+      .gs-radio[aria-checked="true"] {
+        border-color: var(--bom-primary-line);
+        background: var(--bom-primary-soft);
+        color: var(--bom-foreground);
+      }
+
+      .gs-radio:focus-visible {
+        outline: 2px solid var(--bom-ring);
+        outline-offset: 2px;
+      }
+
+      .gs-radio__mark {
+        margin-top: 2px;
+        color: var(--bom-subtle);
+      }
+
+      .gs-radio[aria-checked="true"] .gs-radio__mark {
+        color: var(--bom-primary);
+      }
+
+      .gs-radio__text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+
+      .gs-radio__label {
+        font-size: var(--bom-text-body);
+        line-height: 1.45;
+        color: inherit;
+        overflow-wrap: break-word;
+      }
+
+      .gs-radio__note {
+        font-size: var(--bom-text-micro);
+        line-height: 1.4;
+        color: var(--bom-subtle);
+      }
+
+      .gs-radio[aria-checked="true"] .gs-radio__note {
+        color: var(--bom-muted-foreground);
+      }
+
+      /* 有序优先级列表：18px 序号圆点 */
+      .gs-order {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        min-width: 0;
+        counter-reset: gs-order;
+      }
+
+      .gs-order__item {
+        display: grid;
+        grid-template-columns: 18px minmax(0, 1fr);
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .gs-order__idx {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border-radius: var(--bom-radius-full);
+        background: var(--bom-surface-3);
+        color: var(--bom-muted-foreground);
+        font-size: var(--bom-text-micro);
+        line-height: 1;
+        flex: 0 0 auto;
+      }
+
+      .gs-order__text {
+        font-size: var(--bom-text-body);
+        line-height: 1.45;
+        color: var(--bom-foreground);
+        overflow-wrap: break-word;
+      }
+
+      /* 勾选项 */
+      .gs-checks {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        min-width: 0;
+      }
+
+      .gs-check {
+        display: grid;
+        grid-template-columns: 16px minmax(0, 1fr);
+        align-items: start;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .gs-check__mark {
+        margin-top: 1px;
+        color: var(--bom-primary);
+      }
+
+      .gs-check__text {
+        font-size: 13px;
+        line-height: 1.45;
+        color: var(--bom-foreground);
+        overflow-wrap: break-word;
+      }
+
+      /* ---------- 确认条：横跨整页 ---------- */
+      .gs-confirm {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        padding: 16px;
+        border: 1px solid var(--bom-border);
+        border-radius: var(--bom-radius-lg);
+        background: var(--bom-card);
+      }
+
+      .gs-confirm__status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        flex: 1 1 320px;
+        min-width: 0;
+        font-size: 12.5px;
+        line-height: 1.5;
+        color: var(--bom-muted-foreground);
+        overflow-wrap: break-word;
+      }
+
+      .gs-confirm__actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 0 0 auto;
+      }
+
+      /* ---------- 标签与按钮 ---------- */
+      .gs-tag {
+        display: inline-flex;
+        align-items: center;
+        height: 20px;
+        padding: 0 8px;
+        border-radius: var(--bom-radius-sm);
+        font-size: var(--bom-text-micro);
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .gs-tag--success {
+        background: var(--bom-state-success-soft);
+        color: var(--bom-state-success);
+      }
+
+      .gs-tag--default {
+        background: var(--bom-primary-soft);
+        color: var(--bom-primary);
+      }
+
+      .gs-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 32px;
+        padding: 0 12px;
+        border: 1px solid var(--bom-border);
+        border-radius: var(--bom-radius-md);
+        background: transparent;
+        color: var(--bom-foreground);
+        font-family: inherit;
+        font-size: var(--bom-text-caption);
+        line-height: 1;
+        white-space: nowrap;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 140ms cubic-bezier(.2, .8, .2, 1),
+          border-color 140ms cubic-bezier(.2, .8, .2, 1),
+          color 140ms cubic-bezier(.2, .8, .2, 1);
+      }
+
+      .gs-btn:hover {
+        border-color: var(--bom-border-strong);
+        background: var(--bom-surface-2);
+      }
+
+      .gs-btn:active {
+        background: var(--bom-surface-3);
+      }
+
+      .gs-btn:focus-visible {
+        outline: 2px solid var(--bom-ring);
+        outline-offset: 2px;
+      }
+
+      .gs-btn--primary {
+        border-color: var(--bom-primary);
+        background: var(--bom-primary);
+        color: var(--bom-primary-foreground);
+        font-weight: 600;
+      }
+
+      .gs-btn--primary:hover {
+        border-color: var(--bom-primary-strong);
+        background: var(--bom-primary-strong);
+      }
+
+      .gs-btn--primary:active {
+        border-color: var(--bom-primary-strong);
+        background: var(--bom-primary-strong);
+      }
+
+      /* ---------- 图标尺寸：统一 16px；槽位 18px；确认条提示 14px ---------- */
+      .gs-page i[data-lucide],
+      .gs-page svg {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        flex: 0 0 auto;
+      }
+
+      .gs-file__icon i[data-lucide],
+      .gs-file__icon svg,
+      .gs-drop__icon i[data-lucide],
+      .gs-drop__icon svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .gs-confirm__status i[data-lucide],
+      .gs-confirm__status svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .gs-btn i[data-lucide],
+      .gs-btn svg {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        flex: 0 0 auto;
+      }
+
+      /* ---------- 断点：1280 以下 56/44，1024 以下单列 ---------- */
+      @media (max-width: 1279px) {
+        .gs-columns {
+          grid-template-columns: minmax(0, 56fr) minmax(0, 44fr);
+        }
+      }
+
+      @media (max-width: 1023px) {
+        .gs-columns {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      @media (max-width: 767px) {
+        .gs-file {
+          grid-template-columns: 40px minmax(0, 1fr);
+          align-items: start;
+        }
+
+        .gs-file__aside {
+          grid-column: 2;
+          justify-content: flex-start;
+        }
+
+        .gs-confirm {
+          align-items: flex-start;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .gs-btn,
+        .gs-drop,
+        .gs-radio {
+          transition-duration: 0.01ms;
+        }
+      }
+    
+/* ---- upload-interaction ---- */
+      /* ======================================================================
+         真实文件上传交互（就地补全）
+         仅取 colors_and_type.css 的 --bom-* 令牌；需覆盖 critical-layout 既有
+         规则时在本块内提高特异性重声明，不改动既有规则本身。
+         ====================================================================== */
+
+      /* ---------- 原生文件输入：视觉隐藏，交互由槽位按钮代持 ---------- */
+      .gs-page .gs-upload-input {
+        display: none;
+      }
+
+      /* ---------- 文件槽：整槽为可点击、可聚焦按钮 ---------- */
+      .gs-page button.gs-file {
+        width: 100%;
+        font-family: inherit;
+        text-align: left;
+        color: var(--bom-foreground);
+        cursor: pointer;
+        transition: border-color 140ms cubic-bezier(.2, .8, .2, 1),
+          background-color 140ms cubic-bezier(.2, .8, .2, 1);
+      }
+
+      .gs-page button.gs-file:hover {
+        border-color: var(--bom-primary-line);
+        background: var(--bom-surface-3);
+      }
+
+      .gs-page button.gs-file:active {
+        border-color: var(--bom-primary);
+      }
+
+      /* 槽内操作提示：默认低调，hover 随主色点亮 */
+      .gs-page .gs-file__pick-hint {
+        font-size: var(--bom-text-micro);
+        line-height: 1;
+        white-space: nowrap;
+        color: var(--bom-subtle);
+        transition: color 140ms cubic-bezier(.2, .8, .2, 1);
+      }
+
+      .gs-page button.gs-file:hover .gs-file__pick-hint {
+        color: var(--bom-primary);
+      }
+
+      /* ---------- 拖拽悬停：主色描边 + 上层底色 ---------- */
+      .gs-page button.gs-file.is-dragover,
+      .gs-page button.gs-drop.is-dragover {
+        border-color: var(--bom-primary-line);
+        background: var(--bom-surface-3);
+      }
+
+      /* ---------- 键盘焦点：2px 主色环 ---------- */
+      .gs-page button.gs-file:focus-visible,
+      .gs-page button.gs-drop:focus-visible {
+        outline: 2px solid var(--bom-ring);
+        outline-offset: 2px;
+      }
+
+      /* ---------- 新状态语义：待解析（info 底 + info 文字） ---------- */
+      .gs-page .gs-tag--info {
+        background: var(--bom-state-info-soft);
+        color: var(--bom-state-info);
+      }
+
+      /* ---------- 空投放区：选中文件后转为与其它槽一致的实线槽位 ---------- */
+      .gs-page button.gs-drop.is-filled {
+        grid-template-columns: 40px minmax(0, 1fr) auto;
+        border-style: solid;
+        border-color: var(--bom-border);
+        background: var(--bom-surface-2);
+      }
+
+      .gs-page button.gs-drop.is-filled .gs-drop__title {
+        font-family: var(--bom-font-mono);
+        font-size: var(--bom-text-caption);
+        font-variant-numeric: tabular-nums;
+        color: var(--bom-foreground);
+        overflow-wrap: anywhere;
+      }
+
+      .gs-page button.gs-drop.is-filled .gs-drop__icon {
+        color: var(--bom-primary);
+      }
+
+      .gs-page .gs-drop__aside {
+        display: none;
+      }
+
+      .gs-page button.gs-drop.is-filled .gs-drop__aside {
+        display: flex;
+      }
+
+      .gs-page .gs-drop__icon-file {
+        display: none;
+      }
+
+      .gs-page button.gs-drop.is-filled .gs-drop__icon-upload {
+        display: none;
+      }
+
+      .gs-page button.gs-drop.is-filled .gs-drop__icon-file {
+        display: inline-block;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .gs-page button.gs-file,
+        .gs-page .gs-file__pick-hint {
+          transition-duration: 0.01ms;
+        }
+      }
+    

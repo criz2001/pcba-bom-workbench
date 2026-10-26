@@ -1,0 +1,474 @@
+/* 由设计稿 gen-result.html 抽取，请勿手工微调；改设计请改设计稿后重新运行 tools/extract_css.py */
+/* ---- inline ---- */
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    
+/* ---- critical-layout ---- */
+  /* ===== 页面根框架：自然文档流，不锁定高度、不裁剪滚动 ===== */
+  main {
+    display: block;
+    min-height: 100vh;
+    padding: 24px;
+    background: var(--bom-background);
+    color: var(--bom-foreground);
+    font-family: var(--bom-font-sans);
+    font-size: var(--bom-text-body);
+  }
+
+  /* ===== 通用按钮（次按钮 / 全页唯一主按钮） ===== */
+  .gen-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid var(--bom-border-strong);
+    border-radius: var(--bom-radius-md);
+    background: transparent;
+    color: var(--bom-foreground);
+    font-family: var(--bom-font-sans);
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 140ms cubic-bezier(.2, .8, .2, 1),
+      border-color 140ms cubic-bezier(.2, .8, .2, 1),
+      color 140ms cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .gen-btn i[data-lucide],
+  .gen-btn svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    transition: transform 140ms cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .gen-btn:hover {
+    background: var(--bom-surface-2);
+    border-color: var(--bom-primary-line);
+    color: var(--bom-foreground);
+  }
+
+  .gen-btn:hover i[data-lucide],
+  .gen-btn:hover svg {
+    transform: translateX(2px);
+  }
+
+  .gen-btn:active {
+    background: var(--bom-surface-3);
+  }
+
+  .gen-btn:focus-visible {
+    outline: 2px solid var(--bom-ring);
+    outline-offset: 2px;
+  }
+
+  .gen-btn--primary {
+    background: var(--bom-primary);
+    border-color: var(--bom-primary);
+    color: var(--bom-primary-foreground);
+    font-weight: 600;
+  }
+
+  .gen-btn--primary:hover {
+    background: var(--bom-primary-strong);
+    border-color: var(--bom-primary-strong);
+    color: var(--bom-primary-foreground);
+  }
+
+  .gen-btn--primary:active {
+    background: var(--bom-primary-strong);
+  }
+
+  /* ===== A. 生成结果指标带（分隔线，非卡片墙） ===== */
+  .gen-metrics-block {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .gen-metrics {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--bom-border);
+    border: 1px solid var(--bom-border);
+    border-radius: var(--bom-radius-lg);
+    overflow: hidden;
+  }
+
+  .gen-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 18px;
+    background: var(--bom-card);
+    min-width: 0;
+  }
+
+  .gen-metric__value {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+    color: var(--bom-foreground);
+    white-space: nowrap;
+  }
+
+  .gen-metric__value--primary {
+    color: var(--bom-primary);
+  }
+
+  .gen-metric__value--success {
+    color: var(--bom-state-success);
+  }
+
+  .gen-metric__value--warning {
+    color: var(--bom-state-warning);
+  }
+
+  .gen-metric__label {
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--bom-muted-foreground);
+  }
+
+  .gen-metric__hint {
+    font-size: 11px;
+    line-height: 1.45;
+    color: var(--bom-subtle);
+    overflow-wrap: break-word;
+  }
+
+  .gen-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 10px 0 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--bom-muted-foreground);
+    min-width: 0;
+  }
+
+  .gen-note i[data-lucide],
+  .gen-note svg {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
+    margin-top: 1px;
+    color: var(--bom-state-success);
+  }
+
+  .gen-note span {
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+
+  /* ===== B/C/D. 卡片骨架 ===== */
+  .gen-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border: 1px solid var(--bom-border);
+    border-radius: var(--bom-radius-lg);
+    background: var(--bom-card);
+  }
+
+  .gen-card__head {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--bom-border);
+    min-width: 0;
+  }
+
+  .gen-card__title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--bom-foreground);
+    word-break: keep-all;
+  }
+
+  .gen-card__sub {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--bom-subtle);
+    overflow-wrap: break-word;
+  }
+
+  .gen-card__foot {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 12px 18px;
+    border-top: 1px solid var(--bom-border);
+  }
+
+  /* ===== B. BOM 预览表 ===== */
+  .bom-table-wrap {
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+  }
+
+  .bom-table {
+    table-layout: fixed;
+    width: 100%;
+    min-width: 1040px;
+    border-collapse: collapse;
+  }
+
+  .bom-table th {
+    padding: 9px 8px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--bom-muted-foreground);
+    background: var(--bom-surface-2);
+    border-bottom: 1px solid var(--bom-border);
+    white-space: nowrap;
+  }
+
+  .bom-table td {
+    padding: 9px 8px;
+    vertical-align: top;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--bom-foreground);
+    border-bottom: 1px solid var(--bom-border);
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .bom-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .bom-table tr[data-flag="pending"] td {
+    background: var(--bom-state-warning-soft);
+  }
+
+  .bom-table tr.bom-table__total td {
+    background: var(--bom-surface-2);
+    font-weight: 600;
+    color: var(--bom-foreground);
+  }
+
+  .bom-code {
+    font-family: var(--bom-font-mono);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bom-pending-code {
+    font-size: 11px;
+    color: var(--bom-state-warning);
+  }
+
+  .bom-note {
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--bom-state-warning);
+    overflow-wrap: break-word;
+  }
+
+  /* ===== C. 待确认项 ===== */
+  .gen-issues {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 18px;
+  }
+
+  .gen-issue {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--bom-border);
+  }
+
+  .gen-issue:last-child {
+    border-bottom: 0;
+  }
+
+  .gen-issue__icon {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    flex: 0 0 auto;
+    color: var(--bom-state-warning);
+  }
+
+  .gen-issue__main {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .gen-issue__title {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--bom-foreground);
+    overflow-wrap: break-word;
+  }
+
+  .gen-issue__hint {
+    margin: 0;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--bom-subtle);
+    overflow-wrap: break-word;
+  }
+
+  .gen-issue__refs {
+    font-family: var(--bom-font-mono);
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+    color: var(--bom-muted-foreground);
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  /* ===== D. 输出前校验 ===== */
+  .gen-checks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 20px;
+    padding: 16px 18px;
+  }
+
+  .gen-check {
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+    min-width: 0;
+  }
+
+  .gen-check i[data-lucide],
+  .gen-check svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    margin-top: 1px;
+    color: var(--bom-state-success);
+  }
+
+  .gen-check__text {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--bom-foreground);
+    overflow-wrap: break-word;
+  }
+
+  .gen-check--todo i[data-lucide],
+  .gen-check--todo svg {
+    color: var(--bom-state-info);
+  }
+
+  .gen-check--todo .gen-check__text {
+    color: var(--bom-muted-foreground);
+  }
+
+  /* ===== E. 导出条 ===== */
+  .gen-export {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 16px;
+    border: 1px solid var(--bom-border);
+    border-radius: var(--bom-radius-lg);
+    background: var(--bom-card);
+    min-width: 0;
+  }
+
+  .gen-export__text {
+    margin: 0;
+    flex: 1 1 320px;
+    min-width: 0;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--bom-muted-foreground);
+    overflow-wrap: break-word;
+  }
+
+  .gen-export__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 0 0 auto;
+  }
+
+  /* ===== 断点 ===== */
+  @media (max-width: 1279px) {
+    .gen-metrics {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .gen-checks {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 767px) {
+    main {
+      padding: 16px;
+    }
+
+    .gen-metrics {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .gen-issue {
+      grid-template-columns: 20px minmax(0, 1fr);
+    }
+
+    .gen-issue__refs {
+      grid-column: 2;
+      text-align: left;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gen-btn,
+    .gen-btn i[data-lucide],
+    .gen-btn svg {
+      transition-duration: 0.01ms;
+    }
+
+    .gen-btn:hover i[data-lucide],
+    .gen-btn:hover svg {
+      transform: none;
+    }
+  }

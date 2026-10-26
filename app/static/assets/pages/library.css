@@ -1,0 +1,799 @@
+/* 由设计稿 library.html 抽取，请勿手工微调；改设计请改设计稿后重新运行 tools/extract_css.py */
+/* ---- inline ---- */
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    
+/* ---- critical-layout ---- */
+        /* ==========================================================================
+           物料库与模板（page-library）私有静态布局
+           目标：不依赖 Tailwind 运行时编译，页面骨架依旧成立
+           断点：1280 / 1024 / 768
+           ========================================================================== */
+
+        main {
+          padding: 16px;
+          min-width: 0;
+        }
+
+        /* ---------- 区块骨架 ---------- */
+        .lib-section {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          min-width: 0;
+        }
+
+        .lib-card {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          padding: 16px;
+          min-width: 0;
+          border: 1px solid var(--bom-border);
+          border-radius: var(--bom-radius-lg);
+          background: var(--bom-card);
+        }
+
+        .lib-head {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          min-width: 0;
+        }
+
+        .lib-title {
+          margin: 0;
+          font-size: var(--bom-text-h2);
+          font-weight: 600;
+          line-height: 1.3;
+          color: var(--bom-foreground);
+          word-break: keep-all;
+          overflow-wrap: break-word;
+        }
+
+        .lib-desc {
+          margin: 0;
+          font-size: 12px;
+          line-height: 1.5;
+          color: var(--bom-muted-foreground);
+        }
+
+        /* ---------- 按钮（整页仅 1 个主按钮：工具栏「同步 ERP」） ---------- */
+        .lib-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          height: 32px;
+          padding: 0 12px;
+          border-radius: var(--bom-radius-md);
+          font-family: var(--bom-font-sans);
+          font-size: 13px;
+          font-weight: 500;
+          line-height: 1;
+          white-space: nowrap;
+          text-decoration: none;
+          cursor: pointer;
+          transition: background-color 140ms cubic-bezier(.2, .8, .2, 1),
+            border-color 140ms cubic-bezier(.2, .8, .2, 1),
+            color 140ms cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .lib-btn i[data-lucide],
+        .lib-btn svg {
+          width: 16px;
+          height: 16px;
+          flex: 0 0 auto;
+          transition: transform 140ms cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .lib-btn--primary {
+          border: 1px solid var(--bom-primary);
+          background: var(--bom-primary);
+          color: var(--bom-primary-foreground);
+          font-weight: 600;
+        }
+
+        .lib-btn--primary:hover {
+          border-color: var(--bom-primary-strong);
+          background: var(--bom-primary-strong);
+        }
+
+        .lib-btn--primary:hover i[data-lucide],
+        .lib-btn--primary:hover svg {
+          transform: translateX(2px);
+        }
+
+        .lib-btn--primary:active {
+          border-color: var(--bom-primary-strong);
+          background: var(--bom-primary-strong);
+        }
+
+        .lib-btn--ghost {
+          border: 1px solid var(--bom-border-strong);
+          background: transparent;
+          color: var(--bom-foreground);
+        }
+
+        .lib-btn--ghost:hover {
+          border-color: var(--bom-primary-line);
+          background: var(--bom-surface-2);
+        }
+
+        .lib-btn--ghost:active {
+          background: var(--bom-surface-3);
+        }
+
+        .lib-btn:focus-visible {
+          outline: 2px solid var(--bom-ring);
+          outline-offset: 2px;
+        }
+
+        .lib-btn--sm {
+          height: 28px;
+          padding: 0 10px;
+          font-size: 12px;
+        }
+
+        /* ---------- A. 物料库指标带（竖分隔线，非卡片墙） ---------- */
+        .lib-metrics {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          border: 1px solid var(--bom-border);
+          border-radius: var(--bom-radius-lg);
+          background: var(--bom-surface);
+          overflow: hidden;
+        }
+
+        .lib-metrics__item {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          min-width: 0;
+          padding: 16px;
+          border-left: 1px solid var(--bom-border);
+        }
+
+        .lib-metrics__item:first-child {
+          border-left: none;
+        }
+
+        .lib-metrics__value {
+          font-size: 24px;
+          font-weight: 600;
+          line-height: 1.2;
+          color: var(--bom-foreground);
+          white-space: nowrap;
+        }
+
+        .lib-metrics__value--primary {
+          color: var(--bom-primary);
+        }
+
+        .lib-metrics__value--success {
+          color: var(--bom-state-success);
+        }
+
+        .lib-metrics__value--error {
+          color: var(--bom-state-error);
+        }
+
+        .lib-metrics__value--date {
+          font-size: 16px;
+        }
+
+        .lib-metrics__label {
+          font-size: 12px;
+          line-height: 1.5;
+          color: var(--bom-muted-foreground);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .lib-metrics__sub {
+          font-size: 11px;
+          line-height: 1.5;
+          color: var(--bom-subtle);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        /* ---------- B1. 物料总表工具栏 ---------- */
+        .lib-toolbar {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .lib-toolbar__left {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          align-items: center;
+          min-width: 0;
+        }
+
+        .lib-search {
+          width: 280px;
+          max-width: 100%;
+          height: 32px;
+          padding: 0 10px;
+          border: 1px solid var(--bom-border);
+          border-radius: var(--bom-radius-md);
+          background: var(--bom-input);
+          color: var(--bom-foreground);
+          font-family: var(--bom-font-sans);
+          font-size: 13px;
+          transition: border-color 140ms cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .lib-search::placeholder {
+          color: var(--bom-subtle);
+        }
+
+        .lib-search:hover {
+          border-color: var(--bom-border-strong);
+        }
+
+        .lib-search:focus {
+          border-color: var(--bom-ring);
+        }
+
+        .lib-search:focus-visible {
+          outline: 2px solid var(--bom-ring);
+          outline-offset: 1px;
+        }
+
+        .lib-filters {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          align-items: center;
+        }
+
+        .lib-chip {
+          display: inline-flex;
+          align-items: center;
+          height: 28px;
+          padding: 0 12px;
+          border: 1px solid var(--bom-border);
+          border-radius: var(--bom-radius-full);
+          background: transparent;
+          color: var(--bom-muted-foreground);
+          font-family: var(--bom-font-sans);
+          font-size: 12px;
+          line-height: 1;
+          white-space: nowrap;
+          cursor: pointer;
+          transition: background-color 140ms cubic-bezier(.2, .8, .2, 1),
+            border-color 140ms cubic-bezier(.2, .8, .2, 1),
+            color 140ms cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .lib-chip:hover {
+          border-color: var(--bom-border-strong);
+          background: var(--bom-surface-2);
+          color: var(--bom-foreground);
+        }
+
+        .lib-chip[data-active="true"] {
+          border-color: var(--bom-primary-line);
+          background: var(--bom-primary-soft);
+          color: var(--bom-primary);
+        }
+
+        .lib-chip:focus-visible {
+          outline: 2px solid var(--bom-ring);
+          outline-offset: 2px;
+        }
+
+        /* ---------- B2. 物料总表 ---------- */
+        .lib-table-wrap {
+          width: 100%;
+          min-width: 0;
+          overflow-x: auto;
+        }
+
+        .lib-table {
+          width: 100%;
+          min-width: 880px;
+          border-collapse: collapse;
+          table-layout: fixed;
+        }
+
+        .lib-table th {
+          padding: 8px;
+          border-bottom: 1px solid var(--bom-border);
+          background: var(--bom-surface-2);
+          font-size: 12px;
+          font-weight: 500;
+          color: var(--bom-muted-foreground);
+          text-align: left;
+          white-space: nowrap;
+          word-break: normal;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .lib-table td {
+          padding: 9px 8px;
+          border-bottom: 1px solid var(--bom-border);
+          font-size: 13px;
+          color: var(--bom-foreground);
+          vertical-align: middle;
+          word-break: normal;
+        }
+
+        .lib-table tbody tr {
+          transition: background-color 140ms cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .lib-table tbody tr:hover {
+          background: var(--bom-surface-2);
+        }
+
+        .lib-table tbody tr:last-child td {
+          border-bottom: none;
+        }
+
+        .lib-cell-truncate {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .lib-code {
+          color: var(--bom-muted-foreground);
+        }
+
+        .lib-row--disabled td {
+          color: var(--bom-subtle);
+        }
+
+        .lib-row--disabled .lib-code {
+          color: inherit;
+        }
+
+        .lib-tag {
+          display: inline-flex;
+          align-items: center;
+          height: 22px;
+          padding: 0 8px;
+          border-radius: var(--bom-radius-sm);
+          font-size: 12px;
+          line-height: 1;
+          white-space: nowrap;
+        }
+
+        .lib-tag--success {
+          background: var(--bom-state-success-soft);
+          color: var(--bom-state-success);
+        }
+
+        .lib-tag--disabled {
+          background: var(--bom-surface-2);
+          color: var(--bom-muted-foreground);
+        }
+
+        .lib-tag--primary {
+          background: var(--bom-primary-soft);
+          color: var(--bom-primary);
+          flex: 0 0 auto;
+        }
+
+        .lib-off {
+          color: var(--bom-muted-foreground);
+        }
+
+        .lib-off--yes {
+          color: var(--bom-state-error);
+          font-weight: 500;
+        }
+
+        /* ---------- B3. 分页 ---------- */
+        .lib-pager {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+
+        .lib-pager__info {
+          font-size: 12px;
+          color: var(--bom-subtle);
+        }
+
+        .lib-pager__group {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 4px;
+        }
+
+        .lib-page {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          height: 28px;
+          min-width: 28px;
+          padding: 0 8px;
+          border: 1px solid var(--bom-border);
+          border-radius: var(--bom-radius-sm);
+          background: transparent;
+          color: var(--bom-muted-foreground);
+          font-family: var(--bom-font-sans);
+          font-size: 12px;
+          line-height: 1;
+          white-space: nowrap;
+          cursor: pointer;
+          transition: background-color 140ms cubic-bezier(.2, .8, .2, 1),
+            border-color 140ms cubic-bezier(.2, .8, .2, 1),
+            color 140ms cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .lib-page:hover {
+          border-color: var(--bom-border-strong);
+          background: var(--bom-surface-2);
+          color: var(--bom-foreground);
+        }
+
+        .lib-page[data-active="true"] {
+          border-color: var(--bom-primary-line);
+          background: var(--bom-primary-soft);
+          color: var(--bom-primary);
+        }
+
+        .lib-page:focus-visible {
+          outline: 2px solid var(--bom-ring);
+          outline-offset: 2px;
+        }
+
+        .lib-page__ellipsis {
+          padding: 0 2px;
+          font-size: 12px;
+          color: var(--bom-subtle);
+        }
+
+        /* ---------- C. BOM 模板卡片 ---------- */
+        .lib-tpl-grid {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 16px;
+          align-items: stretch;
+        }
+
+        .lib-tpl {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          padding: 16px;
+          min-width: 0;
+          border: 1px solid var(--bom-border);
+          border-radius: var(--bom-radius-lg);
+          background: var(--bom-surface);
+        }
+
+        .lib-tpl__top {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          min-width: 0;
+        }
+
+        .lib-tpl__icon {
+          width: 20px;
+          height: 20px;
+          color: var(--bom-primary);
+          flex: 0 0 auto;
+        }
+
+        .lib-tpl__name {
+          margin: 0;
+          min-width: 0;
+          flex: 1 1 auto;
+          font-size: 15px;
+          font-weight: 600;
+          line-height: 1.4;
+          color: var(--bom-foreground);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .lib-tpl__flag {
+          margin-left: auto;
+        }
+
+        .lib-tpl__meta {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          margin: 0;
+        }
+
+        .lib-tpl__meta span {
+          font-size: 12px;
+          line-height: 1.5;
+          color: var(--bom-muted-foreground);
+        }
+
+        .lib-tpl__foot {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          flex-wrap: wrap;
+          margin-top: auto;
+          padding-top: 12px;
+          border-top: 1px solid var(--bom-border);
+        }
+
+        .lib-tpl__note {
+          font-size: 11px;
+          line-height: 1.5;
+          color: var(--bom-subtle);
+        }
+
+        /* ---------- D. 上传投放区 ---------- */
+        .lib-drop {
+          display: grid;
+          grid-template-columns: 40px minmax(0, 1fr);
+          gap: 16px;
+          align-items: center;
+          width: 100%;
+          padding: 24px;
+          border: 1px dashed var(--bom-border-strong);
+          border-radius: var(--bom-radius-md);
+          background: var(--bom-surface-2);
+          color: var(--bom-foreground);
+          font-family: var(--bom-font-sans);
+          text-align: left;
+          cursor: pointer;
+          transition: border-color 140ms cubic-bezier(.2, .8, .2, 1),
+            background-color 140ms cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .lib-drop:hover {
+          border-color: var(--bom-primary-line);
+          background: var(--bom-surface-3);
+        }
+
+        .lib-drop:active {
+          background: var(--bom-surface-3);
+        }
+
+        .lib-drop:focus-visible {
+          outline: 2px solid var(--bom-ring);
+          outline-offset: 2px;
+        }
+
+        .lib-drop__icon {
+          width: 24px;
+          height: 24px;
+          color: var(--bom-muted-foreground);
+          justify-self: center;
+          transition: color 140ms cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .lib-drop:hover .lib-drop__icon {
+          color: var(--bom-primary);
+        }
+
+        .lib-drop__text {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          min-width: 0;
+        }
+
+        .lib-drop__title {
+          font-size: 13.5px;
+          font-weight: 500;
+          line-height: 1.5;
+          color: var(--bom-foreground);
+        }
+
+        .lib-drop__hint {
+          font-size: 12px;
+          line-height: 1.5;
+          color: var(--bom-subtle);
+        }
+
+        /* ---------- 断点 1024：指标 2×2、模板单列 ---------- */
+        @media (max-width: 1024px) {
+          .lib-metrics {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+
+          .lib-metrics__item:nth-child(odd) {
+            border-left: none;
+          }
+
+          .lib-metrics__item:nth-child(n + 3) {
+            border-top: 1px solid var(--bom-border);
+          }
+
+          .lib-tpl-grid {
+            grid-template-columns: minmax(0, 1fr);
+          }
+        }
+
+        /* ---------- 断点 768：指标单列 ---------- */
+        @media (max-width: 768px) {
+          main {
+            padding: 8px;
+          }
+
+          .lib-metrics {
+            grid-template-columns: minmax(0, 1fr);
+          }
+
+          .lib-metrics__item {
+            border-left: none;
+          }
+
+          .lib-metrics__item:nth-child(n + 2) {
+            border-top: 1px solid var(--bom-border);
+          }
+
+          .lib-search {
+            width: 100%;
+          }
+        }
+
+        /* ---------- 动效降级 ---------- */
+        @media (prefers-reduced-motion: reduce) {
+          .lib-btn,
+          .lib-btn i[data-lucide],
+          .lib-btn svg,
+          .lib-chip,
+          .lib-page,
+          .lib-search,
+          .lib-drop,
+          .lib-drop__icon,
+          .lib-table tbody tr {
+            transition-duration: 0.01ms;
+          }
+        }
+      
+/* ---- upload-interaction ---- */
+        /* ==========================================================================
+           物料库与模板（page-library）— 文件上传交互
+           范围：物料总表导入入口 + 底部投放区；不改动 id="critical-layout" 既有规则，
+                 需要覆盖时提高特异性重声明。颜色全部取 --bom-* 令牌，亮/暗两套主题通用。
+           ========================================================================== */
+
+        /* ---------- 隐藏的文件选择输入（不使用 hidden 属性） ---------- */
+        .lib-upload-input {
+          display: none;
+        }
+
+        /* ---------- 物料总表工具栏右侧动作组 ---------- */
+        .lib-toolbar__actions {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 8px;
+        }
+
+        .lib-toolbar__actions .lib-btn:focus-visible {
+          outline: 2px solid var(--bom-ring);
+          outline-offset: 2px;
+        }
+
+        /* ---------- 物料总表就绪提示条（写入 DOM，默认隐藏，由 data-visible 驱动） ---------- */
+        .lib-ready {
+          display: none;
+          align-items: center;
+          gap: 8px;
+          min-width: 0;
+          margin: 0;
+          padding: 8px 12px;
+          border-radius: var(--bom-radius-md);
+          background: var(--bom-state-info-soft);
+          color: var(--bom-state-info);
+          font-size: var(--bom-text-caption);
+          line-height: 1.5;
+        }
+
+        .lib-ready[data-visible="true"] {
+          display: flex;
+        }
+
+        .lib-ready__icon,
+        .lib-ready__icon svg {
+          width: 16px;
+          height: 16px;
+          flex: 0 0 auto;
+          color: var(--bom-state-info);
+        }
+
+        .lib-ready__name {
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          color: var(--bom-state-info);
+        }
+
+        .lib-ready__size {
+          flex: 0 0 auto;
+        }
+
+        .lib-ready__state {
+          margin-left: auto;
+          flex: 0 0 auto;
+          white-space: nowrap;
+        }
+
+        /* ---------- 底部投放区：三列（图标 / 文案 / 状态标签） ---------- */
+        .lib-section > .lib-drop {
+          grid-template-columns: 40px minmax(0, 1fr) auto;
+        }
+
+        .lib-section > .lib-drop:focus-visible {
+          outline: 2px solid var(--bom-ring);
+          outline-offset: 2px;
+        }
+
+        .lib-drop.is-dragover {
+          border-color: var(--bom-primary-line);
+          background: var(--bom-surface-3);
+        }
+
+        .lib-drop.is-dragover .lib-drop__icon {
+          color: var(--bom-primary);
+        }
+
+        .lib-drop__flag {
+          display: none;
+          align-items: center;
+          justify-self: end;
+          height: 22px;
+          padding: 0 8px;
+          border-radius: var(--bom-radius-sm);
+          background: var(--bom-state-info-soft);
+          color: var(--bom-state-info);
+          font-size: var(--bom-text-caption);
+          line-height: 1;
+          white-space: nowrap;
+        }
+
+        .lib-drop[data-loaded="true"] .lib-drop__flag {
+          display: inline-flex;
+        }
+
+        /* 选中文件后主文案切换为等宽文件名 */
+        .lib-drop[data-loaded="true"] .lib-drop__title {
+          font-family: var(--bom-font-mono);
+          font-size: var(--bom-text-caption);
+          line-height: 1.55;
+          word-break: break-all;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .lib-toolbar__actions .lib-btn,
+          .lib-drop,
+          .lib-drop__icon {
+            transition-duration: 0.01ms;
+          }
+        }
+      

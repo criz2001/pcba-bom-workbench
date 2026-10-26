@@ -1,0 +1,31 @@
+{% extends "check_result.html" %}
+{% block title %}BOM 校对 · 问题详情 · PCBA BOM 工作台{% endblock %}
+
+{% block crumb %}
+<span>BOM 校对</span>
+<svg class="lucide lucide-chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+<span><a href="/check/setup" style="text-decoration:none">文件与规则</a></span>
+<svg class="lucide lucide-chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+<span><a href="#" data-back-result style="text-decoration:none">核对结果</a></span>
+<svg class="lucide lucide-chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+<span data-current="true">问题详情</span>
+{% endblock %}
+
+{% block page_title %}BOM 校对 · 问题详情{% endblock %}
+
+{% block overlay %}
+<div data-render="drawer" hidden></div>
+{% endblock %}
+
+{% block page_script %}
+<script src="/assets/pages/check_result.js"></script>
+<script>
+  (function () {
+    var back = document.querySelector('[data-back-result]');
+    if (back) {
+      var id = new URLSearchParams(window.location.search).get('task');
+      back.setAttribute('href', '/check/result' + (id ? '?task=' + id : ''));
+    }
+  })();
+</script>
+{% endblock %}

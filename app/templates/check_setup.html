@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}BOM 校对 · 文件与规则 · PCBA BOM 工作台{% endblock %}
+
+{% block crumb %}
+<span>BOM 校对</span>
+<svg class="lucide lucide-chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+<span data-current="true">文件与规则</span>
+{% endblock %}
+
+{% block page_title %}BOM 校对 · 文件与规则{% endblock %}
+
+{% block toolbar_actions %}
+<button type="button" class="ck-btn" data-action="load-last">
+  <svg class="lucide lucide-history" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+  查看上次结果
+</button>
+<button type="button" class="ck-btn" data-action="clear-all">
+  <svg class="lucide lucide-eraser" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21H8a2 2 0 0 1-1.42-.587l-3.994-3.999a2 2 0 0 1 0-2.828l10-10a2 2 0 0 1 2.829 0l5.999 6a2 2 0 0 1 0 2.828L12.834 21"/><path d="m5.082 11.09 8.828 8.828"/></svg>
+  清空全部
+</button>
+{% endblock %}
+
+{% block page_body %}
+<div class="ck-page">
+  <div class="ck-columns">
+    <div class="ck-col">
+      <section class="ck-card" aria-labelledby="ck-files-title">
+        <div class="ck-card__head">
+          <h2 class="ck-card__title" id="ck-files-title">待核对文件</h2>
+          <p class="ck-card__sub">共 4 类输入；PCB 与原理图是封装与位号的实物基准，物料总表是编码基准</p>
+        </div>
+        <div class="ck-slots" data-render="file-slots"></div>
+      </section>
+    </div>
+
+    <div class="ck-col">
+      <section class="ck-card" aria-labelledby="ck-rules-title">
+        <div class="ck-card__head">
+          <h2 class="ck-card__title" id="ck-rules-title">核对规则</h2>
+          <p class="ck-card__sub">共 9 类，点击可逐项开关</p>
+        </div>
+        <ul class="ck-rules" data-render="rules"></ul>
+      </section>
+
+      <section class="ck-card" aria-labelledby="ck-output-title">
+        <div class="ck-card__head">
+          <h2 class="ck-card__title" id="ck-output-title">输出选项</h2>
+          <p class="ck-card__sub">勾选后写入结果工作簿</p>
+        </div>
+        <ul class="ck-rules" data-render="outputs"></ul>
+      </section>
+    </div>
+  </div>
+
+  <div class="ck-confirm" data-render="confirm"></div>
+</div>
+
+<!-- 文件槽模板：由 check_setup.js 复制填充，保证与设计稿结构一致 -->
+<template id="tpl-slot-filled">
+  <div class="ck-file" data-upload-slot="">
+    <input type="file" style="display:none" data-upload-input>
+    <button type="button" class="ck-file__pick" data-upload-trigger>
+      <span class="ck-file__icon" aria-hidden="true"></span>
+      <span class="ck-file__body">
+        <span class="ck-file__name bom-mono" data-upload-name></span>
+        <span class="ck-file__meta bom-num" data-upload-meta></span>
+      </span>
+    </button>
+    <div class="ck-file__aside">
+      <span class="ck-tag" data-upload-tag></span>
+      <button type="button" class="ck-textbtn" data-upload-trigger>替换</button>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-slot-empty">
+  <div class="ck-slot" data-upload-slot="" data-upload-filled="false">
+    <input type="file" style="display:none" data-upload-input>
+    <button type="button" class="ck-drop" data-upload-trigger>
+      <span class="ck-drop__icon" aria-hidden="true"></span>
+      <span class="ck-drop__text">
+        <span class="ck-drop__title"></span>
+        <span class="ck-drop__note"></span>
+      </span>
+    </button>
+    <div class="ck-file">
+      <button type="button" class="ck-file__pick" data-upload-trigger>
+        <span class="ck-file__icon" aria-hidden="true"></span>
+        <span class="ck-file__body">
+          <span class="ck-file__name bom-mono" data-upload-name>未选择文件</span>
+          <span class="ck-file__meta bom-num" data-upload-meta>已载入，等待解析</span>
+        </span>
+      </button>
+      <div class="ck-file__aside">
+        <span class="ck-tag ck-tag--pending" data-upload-tag>待解析</span>
+        <button type="button" class="ck-textbtn" data-upload-trigger>替换</button>
+      </div>
+    </div>
+  </div>
+</template>
+{% endblock %}
+
+{% block status_context %}输入检查 4 类{% endblock %}
+
+{% block page_script %}
+<script src="/assets/pages/check_setup.js"></script>
+{% endblock %}

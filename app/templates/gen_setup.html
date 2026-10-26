@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}BOM 生成 · 文件与模板 · PCBA BOM 工作台{% endblock %}
+
+{% block crumb %}
+<span>BOM 生成</span>
+<svg class="lucide lucide-chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+<span data-current="true">文件与模板</span>
+{% endblock %}
+
+{% block page_title %}BOM 生成 · 文件与模板{% endblock %}
+
+{% block toolbar_actions %}
+<a href="/library" class="gs-btn">
+  <svg class="lucide lucide-database" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
+  物料库与模板
+</a>
+<button type="button" class="gs-btn" data-action="reset">
+  <svg class="lucide lucide-rotate-ccw" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+  重置
+</button>
+{% endblock %}
+
+{% block page_body %}
+<div class="gs-page">
+  <div class="gs-columns">
+    <div class="gs-col">
+      <section class="gs-card" aria-labelledby="gs-files-title">
+        <div class="gs-card__head">
+          <h2 class="gs-card__title" id="gs-files-title">设计文件</h2>
+          <p class="gs-card__sub">封装与位号的实物基准</p>
+        </div>
+        <div class="gs-slots" data-render="design-slots"></div>
+      </section>
+
+      <section class="gs-card" aria-labelledby="gs-assets-title">
+        <div class="gs-card__head">
+          <h2 class="gs-card__title" id="gs-assets-title">素材与模板</h2>
+          <p class="gs-card__sub">编码、规格与列结构的来源</p>
+        </div>
+        <div class="gs-slots" data-render="asset-slots"></div>
+      </section>
+
+      <section class="gs-card" aria-labelledby="gs-extract-title">
+        <div class="gs-card__head">
+          <h2 class="gs-card__title" id="gs-extract-title">提取结果预览</h2>
+          <p class="gs-card__sub">字段冲突按优先级取值，冲突会写入 BOM 备注</p>
+        </div>
+        <div class="gs-tablewrap" data-render="extract"></div>
+      </section>
+    </div>
+
+    <div class="gs-col">
+      <section class="gs-card" aria-labelledby="gs-output-title">
+        <div class="gs-card__head">
+          <h2 class="gs-card__title" id="gs-output-title">输出设置</h2>
+          <p class="gs-card__sub">合并规则与取值优先级</p>
+        </div>
+
+        <div class="gs-group">
+          <p class="gs-group__title">合并方式</p>
+          <div class="gs-radios" role="radiogroup" aria-label="合并方式" data-render="modes"></div>
+        </div>
+
+        <div class="gs-group">
+          <p class="gs-group__title">规格取值优先级</p>
+          <ol class="gs-order" data-render="spec-rule"></ol>
+          <p class="gs-group__note">Value 与 Comment 冲突时采用 Value，并在备注记录冲突来源</p>
+        </div>
+
+        <div class="gs-group">
+          <p class="gs-group__title">封装判定优先级</p>
+          <ol class="gs-order" data-render="fp-rule"></ol>
+          <p class="gs-group__note">不凭位号前缀判断封装；自定义封装（TP-Q / GZAJ / WIFI_LCD-1）需结合引脚数与物料名称判断</p>
+        </div>
+
+        <div class="gs-group">
+          <p class="gs-group__title">数量与合并约束</p>
+          <ul class="gs-checks">
+            <li class="gs-check">
+              <svg class="lucide lucide-check-square gs-check__mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg>
+              <span class="gs-check__text">数量必须等于该行唯一位号数</span>
+            </li>
+            <li class="gs-check">
+              <svg class="lucide lucide-check-square gs-check__mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg>
+              <span class="gs-check__text">合并前先去重位号，按前缀 + 数字自然排序</span>
+            </li>
+            <li class="gs-check">
+              <svg class="lucide lucide-check-square gs-check__mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></svg>
+              <span class="gs-check__text">规格相同但封装不同的器件不合并</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="gs-card" aria-labelledby="gs-map-title">
+        <div class="gs-card__head">
+          <h2 class="gs-card__title" id="gs-map-title">模板列映射</h2>
+          <p class="gs-card__sub" data-render="map-sub">尚未选择模板</p>
+        </div>
+        <div class="gs-tablewrap" data-render="map"></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="gs-confirm" data-render="confirm"></div>
+</div>
+{% endblock %}
+
+{% block status_context %}设计元件 —{% endblock %}
+
+{% block page_script %}
+<script src="/assets/pages/gen_setup.js"></script>
+{% endblock %}

@@ -1,0 +1,225 @@
+/* ==========================================================================
+   PCBA BOM 工作台 — 品牌样式令牌
+   风格：深色专业工程风（石墨底 + 单一青蓝主色）
+   --------------------------------------------------------------------------
+   约定：
+   1. 全项目仅一个品牌色相（primary / 青蓝），不定义 secondary、accent。
+   2. 状态色只用于「严重 / 一般 / 提示」等真实状态语义，不做分类装饰。
+   3. 圆角仅 4 / 8 / 12 / 9999px 四档，静态卡片与面板不超过 12px。
+   4. 静态表面以描边 + 表面分层为主；阴影仅用于抽屉 / 弹窗等真实浮层。
+   5. 中文正文使用无衬线栈；等宽字体仅用于日志与编码。
+   ========================================================================== */
+
+:root {
+  /* ---------- 品牌主色（唯一色相） ---------- */
+  --bom-primary: #22bfda;
+  --bom-primary-strong: #17a3bc;
+  --bom-primary-foreground: #04222b;
+  --bom-primary-soft: rgba(34, 191, 218, 0.14);
+  --bom-primary-line: rgba(34, 191, 218, 0.34);
+  --bom-primary-glow: rgba(34, 191, 218, 0.07);
+
+  /* ---------- 中性表面与文字（深色基准） ---------- */
+  --bom-background: #0b1015;
+  --bom-background-deep: #080c11;
+  --bom-foreground: #e4ecf4;
+  --bom-surface: #111821;
+  --bom-surface-2: #17202b;
+  --bom-surface-3: #1e2938;
+  --bom-card: #111821;
+  --bom-card-foreground: #e4ecf4;
+  --bom-popover: #141c26;
+  --bom-popover-foreground: #e4ecf4;
+  --bom-muted: #141c26;
+  --bom-muted-foreground: #8fa0b3;
+  --bom-subtle: #5f7186;
+  --bom-border: #1e2a37;
+  --bom-border-strong: #2b3a49;
+  --bom-input: #17202b;
+  --bom-ring: #22bfda;
+
+  /* ---------- 语义状态色（仅用于真实状态） ---------- */
+  --bom-state-success: #3fbf8f;
+  --bom-state-success-soft: rgba(63, 191, 143, 0.14);
+  --bom-state-warning: #e0a63c;
+  --bom-state-warning-soft: rgba(224, 166, 60, 0.14);
+  --bom-state-error: #e2676a;
+  --bom-state-error-soft: rgba(226, 103, 106, 0.14);
+  --bom-state-info: #5c9be0;
+  --bom-state-info-soft: rgba(92, 155, 224, 0.14);
+  --bom-destructive: #e2676a;
+  --bom-destructive-foreground: #2a0b0c;
+
+  /* ---------- 圆角 ---------- */
+  --bom-radius-sm: 4px;
+  --bom-radius-md: 8px;
+  --bom-radius-lg: 12px;
+  --bom-radius-full: 9999px;
+
+  /* ---------- 阴影（静态 ≤ 0.05；浮层可用深阴影） ---------- */
+  --bom-shadow-static: 0 1px 2px rgba(3, 7, 12, 0.04);
+  --bom-shadow-float: 0 24px 60px -24px rgba(0, 0, 0, 0.55);
+  --bom-shadow-overlay: 0 18px 44px -18px rgba(0, 0, 0, 0.5);
+
+  /* ---------- 间距（8pt 栅格） ---------- */
+  --bom-space-1: 4px;
+  --bom-space-2: 8px;
+  --bom-space-3: 12px;
+  --bom-space-4: 16px;
+  --bom-space-5: 24px;
+  --bom-space-6: 32px;
+  --bom-space-7: 48px;
+
+  /* ---------- 字体 ---------- */
+  --bom-font-sans: "Inter", "Segoe UI", "Noto Sans SC", "PingFang SC",
+    "Microsoft YaHei", system-ui, sans-serif;
+  --bom-font-mono: "JetBrains Mono", "Cascadia Mono", Consolas, "Courier New",
+    monospace;
+
+  /* ---------- 字号 ---------- */
+  --bom-text-display: 30px;
+  --bom-text-h1: 22px;
+  --bom-text-h2: 17px;
+  --bom-text-h3: 15px;
+  --bom-text-body: 13.5px;
+  --bom-text-caption: 12px;
+  --bom-text-micro: 11px;
+}
+
+.light {
+  --bom-primary: #0e93ab;
+  --bom-primary-strong: #0b7a8e;
+  --bom-primary-foreground: #ffffff;
+  --bom-primary-soft: rgba(14, 147, 171, 0.1);
+  --bom-primary-line: rgba(14, 147, 171, 0.28);
+  --bom-primary-glow: rgba(14, 147, 171, 0.05);
+
+  --bom-background: #f3f6f9;
+  --bom-background-deep: #e9eef3;
+  --bom-foreground: #16202b;
+  --bom-surface: #ffffff;
+  --bom-surface-2: #f2f5f8;
+  --bom-surface-3: #e8edf2;
+  --bom-card: #ffffff;
+  --bom-card-foreground: #16202b;
+  --bom-popover: #ffffff;
+  --bom-popover-foreground: #16202b;
+  --bom-muted: #f2f5f8;
+  --bom-muted-foreground: #5c6b7c;
+  --bom-subtle: #8093a6;
+  --bom-border: #dde4ec;
+  --bom-border-strong: #c6d1dd;
+  --bom-input: #ffffff;
+  --bom-ring: #0e93ab;
+
+  --bom-state-success: #1f9c6c;
+  --bom-state-warning: #b4791a;
+  --bom-state-error: #c8393d;
+  --bom-state-info: #2f6fbd;
+
+  --bom-shadow-static: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --bom-shadow-float: 0 24px 60px -24px rgba(15, 23, 42, 0.28);
+  --bom-shadow-overlay: 0 18px 44px -18px rgba(15, 23, 42, 0.24);
+}
+
+/* ==========================================================================
+   排版类
+   ========================================================================== */
+
+.bom-display {
+  font-family: var(--bom-font-sans);
+  font-size: var(--bom-text-display);
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--bom-foreground);
+  text-wrap: balance;
+  word-break: keep-all;
+}
+
+.bom-h1 {
+  font-family: var(--bom-font-sans);
+  font-size: var(--bom-text-h1);
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--bom-foreground);
+  text-wrap: balance;
+  word-break: keep-all;
+}
+
+.bom-h2 {
+  font-family: var(--bom-font-sans);
+  font-size: var(--bom-text-h2);
+  line-height: 1.3;
+  font-weight: 600;
+  color: var(--bom-foreground);
+  text-wrap: balance;
+  word-break: keep-all;
+}
+
+.bom-h3 {
+  font-family: var(--bom-font-sans);
+  font-size: var(--bom-text-h3);
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--bom-foreground);
+  word-break: keep-all;
+}
+
+.bom-body {
+  font-family: var(--bom-font-sans);
+  font-size: var(--bom-text-body);
+  line-height: 1.6;
+  font-weight: 400;
+  color: var(--bom-muted-foreground);
+}
+
+.bom-caption {
+  font-family: var(--bom-font-sans);
+  font-size: var(--bom-text-caption);
+  line-height: 1.5;
+  color: var(--bom-subtle);
+}
+
+.bom-mono {
+  font-family: var(--bom-font-mono);
+  font-size: var(--bom-text-caption);
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
+}
+
+.bom-num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   基础元素
+   ========================================================================== */
+
+body {
+  font-family: var(--bom-font-sans);
+  font-size: var(--bom-text-body);
+  background: var(--bom-background);
+  color: var(--bom-foreground);
+}
+
+::selection {
+  background: var(--bom-primary-soft);
+  color: var(--bom-foreground);
+}
+
+*:focus-visible {
+  outline: 2px solid var(--bom-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

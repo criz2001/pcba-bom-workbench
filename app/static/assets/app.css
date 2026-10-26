@@ -1,0 +1,370 @@
+/* ==========================================================================
+   PCBA BOM 工作台 — 应用层共享样式
+   仅补充设计稿之外的必需品，全部颜色取 colors_and_type.css 的 --bom-* 令牌：
+   1) 设计稿曾依赖 Tailwind 运行时的少量工具类（改成本地实现，离线可用）；
+   2) 空状态 / 加载态 / 轻提示 / 弹层等真实软件需要的状态组件；
+   3) 窄屏下的移动端抽屉导航。
+   ========================================================================== */
+
+/* ---------- 1. 少量工具类（设计稿用到的 Tailwind 类） ---------- */
+.min-h-screen { min-height: 100vh; }
+.font-sans { font-family: var(--bom-font-sans); }
+.antialiased { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+.break-words { word-wrap: break-word; overflow-wrap: break-word; }
+.whitespace-nowrap { white-space: nowrap; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bom-background);
+  color: var(--bom-foreground);
+}
+
+a { color: inherit; }
+
+/* ---------- 1.1 外壳铺满窗口 ----------
+   设计稿是按 1480px 画布画的，直接放进真实窗口（尤其是最大化）会四周留白。
+   这里让外壳铺满视口；页面内部的 .app-main / .app-toolbar 留白保持不变。
+   app.css 在 base.html 中最后加载，因此这些规则可以覆盖 shell.css 与各页 CSS。 */
+body > main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0;
+}
+
+.app-window {
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  flex: 1 1 auto;
+  border: 0;
+  border-radius: 0;
+}
+
+/* 超宽屏（>2000px）时限制正文宽度并居中，避免表格被拉得过散 */
+.app-main {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+/* 独立窗口里用 Windows 自带的最小化 / 最大化 / 关闭，隐藏界面内的装饰按钮 */
+html[data-desktop="true"] .app-titlebar__controls {
+  display: none;
+}
+
+/* ---------- 2. 状态组件 ---------- */
+
+/* 2.1 空状态：整页 / 区块内均可复用 */
+.bom-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 24px;
+  min-width: 0;
+  border: 1px dashed var(--bom-border-strong);
+  border-radius: var(--bom-radius-lg);
+  background: var(--bom-surface-2);
+  text-align: center;
+}
+
+.bom-empty__icon {
+  width: 28px;
+  height: 28px;
+  color: var(--bom-subtle);
+}
+
+.bom-empty__title {
+  margin: 0;
+  font-size: var(--bom-text-h3);
+  font-weight: 600;
+  color: var(--bom-foreground);
+}
+
+.bom-empty__desc {
+  margin: 0;
+  max-width: 52ch;
+  font-size: var(--bom-text-caption);
+  line-height: 1.6;
+  color: var(--bom-muted-foreground);
+}
+
+.bom-empty__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: center;
+}
+
+/* 2.2 加载态 */
+.bom-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--bom-text-caption);
+  color: var(--bom-muted-foreground);
+}
+
+.bom-spinner {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  border: 2px solid var(--bom-border-strong);
+  border-top-color: var(--bom-primary);
+  border-radius: var(--bom-radius-full);
+  animation: bom-spin 720ms linear infinite;
+}
+
+@keyframes bom-spin { to { transform: rotate(360deg); } }
+
+.bom-skeleton {
+  height: 12px;
+  border-radius: var(--bom-radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--bom-surface-2) 25%,
+    var(--bom-surface-3) 37%,
+    var(--bom-surface-2) 63%
+  );
+  background-size: 400% 100%;
+  animation: bom-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes bom-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+/* 2.3 轻提示（toast） */
+.bom-toasts {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: min(380px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.bom-toast {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  padding: 10px 12px;
+  border: 1px solid var(--bom-border-strong);
+  border-radius: var(--bom-radius-md);
+  background: var(--bom-popover);
+  color: var(--bom-foreground);
+  box-shadow: var(--bom-shadow-overlay);
+  font-size: var(--bom-text-caption);
+  line-height: 1.55;
+  pointer-events: auto;
+  animation: bom-toast-in 160ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.bom-toast__icon {
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+}
+
+.bom-toast--success { border-color: var(--bom-state-success); }
+.bom-toast--success .bom-toast__icon { color: var(--bom-state-success); }
+.bom-toast--error { border-color: var(--bom-state-error); }
+.bom-toast--error .bom-toast__icon { color: var(--bom-state-error); }
+.bom-toast--warning { border-color: var(--bom-state-warning); }
+.bom-toast--warning .bom-toast__icon { color: var(--bom-state-warning); }
+.bom-toast--info .bom-toast__icon { color: var(--bom-state-info); }
+
+@keyframes bom-toast-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* 2.4 阻塞式遮罩进度（生成 / 核对触发瞬间） */
+.bom-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(4, 8, 12, 0.55);
+}
+
+.bom-overlay[hidden] { display: none; }
+
+.bom-overlay__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  padding: 24px 28px;
+  border: 1px solid var(--bom-border-strong);
+  border-radius: var(--bom-radius-lg);
+  background: var(--bom-popover);
+  box-shadow: var(--bom-shadow-float);
+  text-align: center;
+}
+
+.bom-overlay__title {
+  margin: 0;
+  font-size: var(--bom-text-h3);
+  font-weight: 600;
+}
+
+.bom-overlay__desc {
+  margin: 0;
+  font-size: var(--bom-text-caption);
+  color: var(--bom-muted-foreground);
+}
+
+/* ---------- 3. 真实数据渲染用的表格补充 ---------- */
+
+.bom-muted { color: var(--bom-subtle); }
+.bom-strong { color: var(--bom-foreground); font-weight: 600; }
+.bom-error { color: var(--bom-state-error); }
+.bom-warning { color: var(--bom-state-warning); }
+.bom-success { color: var(--bom-state-success); }
+.bom-info { color: var(--bom-state-info); }
+
+.bom-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: var(--bom-radius-sm);
+  background: var(--bom-surface-2);
+  color: var(--bom-muted-foreground);
+  font-size: var(--bom-text-caption);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.bom-tag--error { background: var(--bom-state-error-soft); color: var(--bom-state-error); }
+.bom-tag--warning { background: var(--bom-state-warning-soft); color: var(--bom-state-warning); }
+.bom-tag--success { background: var(--bom-state-success-soft); color: var(--bom-state-success); }
+.bom-tag--info { background: var(--bom-state-info-soft); color: var(--bom-state-info); }
+.bom-tag--primary { background: var(--bom-primary-soft); color: var(--bom-primary); }
+
+.bom-code {
+  font-family: var(--bom-font-mono);
+  font-size: 12px;
+  color: var(--bom-foreground);
+  background: var(--bom-surface-2);
+  border-radius: var(--bom-radius-sm);
+  padding: 0 4px;
+}
+
+/* 文件解析失败状态标签：设计稿只画了「已解析 / 待解析」，这里补齐失败态 */
+.ck-tag--error,
+.gs-tag--error {
+  background: var(--bom-state-error-soft);
+  color: var(--bom-state-error);
+}
+
+/* 表格横向滚动容器：与各页既有的 *-table-wrap 视觉一致 */
+.bom-scroll-x {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+/* ---------- 4. 移动端抽屉导航 ---------- */
+
+.app-nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 1px solid var(--bom-border);
+  border-radius: var(--bom-radius-md);
+  background: transparent;
+  color: var(--bom-muted-foreground);
+  cursor: pointer;
+}
+
+.app-nav-toggle:hover {
+  background: var(--bom-surface-3);
+  color: var(--bom-foreground);
+}
+
+.app-nav-toggle svg { width: 15px; height: 15px; }
+
+.app-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(4, 8, 12, 0.5);
+}
+
+@media (max-width: 767px) {
+  .app-nav-toggle { display: inline-flex; }
+
+  .app-backdrop[data-visible="true"] { display: block; }
+
+  /* 手机端：左侧导航改为抽屉，避免只有 64px 图标轨道无法触达 */
+  .app-window .app-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 50;
+    width: 240px;
+    flex-basis: 240px;
+    padding: 16px 12px;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 180ms cubic-bezier(.2, .8, .2, 1);
+    box-shadow: var(--bom-shadow-float);
+  }
+
+  .app-window .app-sidebar[data-open="true"] { transform: none; }
+
+  .app-window .app-sidebar .app-nav__item {
+    justify-content: flex-start;
+    padding: 0 10px;
+  }
+
+  .app-window .app-sidebar .app-nav__item span { display: inline; }
+  .app-window .app-sidebar .app-nav__label,
+  .app-window .app-sidebar .app-sidebar__foot { display: flex; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-window .app-sidebar { transition-duration: 0.01ms; }
+}
+
+/* ---------- 5. 动效降级 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .bom-spinner,
+  .bom-skeleton,
+  .bom-toast {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}
