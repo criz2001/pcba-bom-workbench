@@ -6,7 +6,7 @@
 | 项目 | 值 |
 | --- | --- |
 | 应用名称 | PCBA BOM 工作台（PCBA-BOM-Workbench） |
-| 版本 / 构建 | v2.5.0 · build 20261027（[更新日志](CHANGELOG.md)） |
+| 版本 / 构建 | v2.6.0 · build 20261027（[更新日志](CHANGELOG.md)） |
 | 运行平台 | Windows 10 / 11（桌面窗口模式依赖 WebView2） |
 | 技术栈 | Python 3.10+ / Flask / openpyxl / olefile / pywebview + 原生 HTML/CSS/JS |
 | 数据存储 | 本地文件（工作区目录 + JSON 状态 + 任务快照） |
@@ -58,7 +58,33 @@
 
 ## 三、快速开始
 
-### 方式一：双击启动（推荐）
+### 方式一：安装到本机，生成桌面图标（推荐）
+
+1. 确认已安装 **Python 3.10 或更高版本**，安装时勾选 *Add Python to PATH*。
+2. 双击根目录下的 `安装.bat`（内部调用 `install.ps1`）。
+3. 安装器会自动：
+   - 把程序复制到 `%LOCALAPPDATA%\Programs\PCBA-BOM-Workbench`；
+   - 数据目录设为 `%LOCALAPPDATA%\PCBA-BOM-Workbench\data`（与旧版一致，升级不丢数据）；
+   - 在**桌面**和开始菜单创建「PCBA BOM 工作台」图标（使用应用自带 `app.ico`）；
+   - 写入 `config.json`、`install.json`，并注册「应用和功能」卸载入口。
+4. 双击桌面图标即可打开。首次点击会自动准备 `.venv`，之后启动是秒级。
+5. 升级：重新运行 `安装.bat`，已有 `.venv` 与数据保留；卸载：运行程序目录下的 `卸载.bat`。
+
+> 不想安装时，可直接双击 `start.bat` 从源码启动，见方式二。
+
+安装器可选参数（直接调用 `install.ps1` 时）：
+
+| 参数 | 作用 |
+| --- | --- |
+| `-InstallDir <目录>` | 自定义程序安装目录 |
+| `-DataDir <目录>` | 自定义数据目录 |
+| `-ShortcutName <名称>` | 自定义快捷方式名称 |
+| `-NoDesktopShortcut` / `-NoStartMenuShortcut` | 不创建对应快捷方式 |
+| `-NoRegistry` | 不写卸载注册表项 |
+| `-Launch` | 安装完成后立即启动 |
+| `-Quiet` | 减少输出、不等待回车 |
+
+### 方式二：不安装，直接双击 start.bat
 
 1. 确认已安装 **Python 3.10 或更高版本**，安装时勾选 *Add Python to PATH*。
 2. 双击项目根目录下的 `start.bat`。
@@ -73,7 +99,7 @@
 > 如果依赖安装失败（通常是网络问题），会退回 **系统 Python** 继续启动，而不是直接报错退出。
 > 启动失败的详细信息写入 `logs\desktop.log`。
 
-### 方式二：浏览器模式手动启动
+### 方式三：浏览器模式手动启动
 
 ```bat
 python -m venv .venv
@@ -259,7 +285,7 @@ python -m venv .venv
 ```json
 {
   "workspace": "C:\\Users\\<你的用户名>\\AppData\\Local\\PCBA-BOM-Workbench\\data",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "installedAt": "2026-09-22 16:03:05"
 }
 ```
@@ -292,8 +318,11 @@ python -m venv .venv
 ```text
 PCBA-BOM-Workbench/
 ├─ start.bat                    双击启动：准备 .venv → 装依赖 → 起桌面窗口
+├─ 安装.bat                     安装入口（调用 install.ps1，创建桌面图标）
+├─ install.ps1                  安装/升级：复制程序、写配置、建快捷方式、注册卸载
 ├─ 卸载.bat                     卸载入口（调用 uninstall.ps1）
 ├─ uninstall.ps1                关闭实例、删快捷方式/注册表/程序目录，可选删数据
+├─ CHANGELOG.md                 版本与更新日志
 ├─ config.json                  工作区位置、版本、安装时间
 ├─ requirements.txt             核心依赖
 ├─ requirements-desktop.txt     可选桌面窗口依赖
@@ -468,7 +497,7 @@ pywebview 打开原生窗口（Windows 使用 WebView2 后端）
 
 脚本会在 **临时工作区** 里构造样例 SchDoc / PcbDoc / BOM / 物料总表 / 模板，跑完「上传解析 → 基准校验 → 10 类规则核对 → 结果 Excel → BOM 生成 → 物料库接口 → 页面渲染 → 状态持久化 → 桌面原生接口 → 浏览器回退 → 单实例保护 → 无总表降级」全流程，不影响真实工作区。
 
-> 注意：脚本最后一节（第 14 节「图标与安装包产物」）会从 `install/` 目录导入 `make_icon` 等打包相关脚本。**当前项目副本不包含 `install/` 目录**，因此自检会在第 14 节抛出 `ModuleNotFoundError` 并以非零码退出；第 1–13 节（引擎、接口、页面、桌面桥接、降级逻辑）均会正常通过。若只需验证业务能力，可忽略最后一节。
+> 第 14 节会校验安装器脚本（`install.ps1` / `uninstall.ps1` / 两个 .bat）与图标资源；正常情况下自检全部通过。自检运行在临时工作区，不影响真实数据。
 
 ---
 
@@ -481,6 +510,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File uninstall.ps1
 ```
 
 - 默认行为：关闭正在运行的实例 → 删除桌面/开始菜单快捷方式 → 移除「已安装的应用」注册表项 → 删除程序目录 → **保留数据目录**。
+- 卸载脚本带安装目录校验：在源码/开发目录误运行会直接拒绝，避免误删项目文件；快捷方式按 `install.json` 记录清理。
 - 追加参数：
   - `-RemoveData`：连同工作区（上传文件、输出结果、物料库）一起删除；
   - `-Quiet`：减少输出。
@@ -493,6 +523,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File uninstall.ps1
 | 现象 | 排查方向 |
 | --- | --- |
 | 双击后没有窗口 | 看 `logs/desktop.log`；`start.bat` 等待约 24 秒仍无 `logs/desktop.ready` 会提示失败 |
+| 桌面图标没了 / 换电脑想重建 | 重新运行 `安装.bat`，会覆盖安装并重建桌面和开始菜单图标，数据不会丢 |
+| 双击桌面图标没反应 | 看安装目录下 `logs/desktop.log`；首次启动需要准备 Python 环境，稍等或手动运行安装目录的 `start.bat` 查看报错 |
 | 提示「已经在运行」 | 已有实例持有工作区文件锁，从任务栏切到已打开窗口即可 |
 | 首次启动很慢 | 正在创建 `.venv` 并安装依赖，属正常；之后启动是秒级 |
 | 依赖安装失败 | 检查网络；`start.bat` 会自动用系统 Python 兜底，但需系统 Python 装有 Flask/openpyxl/olefile |
@@ -521,8 +553,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File uninstall.ps1
 
 - 版本号遵循语义化版本：新增功能 / 核对规则升 minor，问题修复升 patch。
 - 每次发布同步更新 [CHANGELOG.md](CHANGELOG.md)，在仓库打 `vX.Y.Z` 标签并创建 GitHub Release。
-- 当前版本 **v2.5.0**（build 20261027）。
+- 当前版本 **v2.6.0**（build 20261027）。
 
 ---
 
-*文档基于当前工作副本（v2.5.0 / build 20261027）的实际代码与一次完整自检结果整理。*
+*文档基于当前工作副本（v2.6.0 / build 20261027）的实际代码与一次完整自检结果整理。*
