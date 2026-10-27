@@ -6,7 +6,7 @@
 | 项目 | 值 |
 | --- | --- |
 | 应用名称 | PCBA BOM 工作台（PCBA-BOM-Workbench） |
-| 版本 / 构建 | v2.4.1 · build 20260922 |
+| 版本 / 构建 | v2.5.0 · build 20261027（[更新日志](CHANGELOG.md)） |
 | 运行平台 | Windows 10 / 11（桌面窗口模式依赖 WebView2） |
 | 技术栈 | Python 3.10+ / Flask / openpyxl / olefile / pywebview + 原生 HTML/CSS/JS |
 | 数据存储 | 本地文件（工作区目录 + JSON 状态 + 任务快照） |
@@ -259,7 +259,7 @@ python -m venv .venv
 ```json
 {
   "workspace": "C:\\Users\\<你的用户名>\\AppData\\Local\\PCBA-BOM-Workbench\\data",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "installedAt": "2026-09-22 16:03:05"
 }
 ```
@@ -513,8 +513,16 @@ powershell -NoProfile -ExecutionPolicy Bypass -File uninstall.ps1
 - **前端结构**：页面是 Jinja2 模板（`app/templates/`），共享外壳 `base.html`；脚本加载顺序 `api.js`（请求/提示/toast/overlay）→ `app.js`（状态与轮询）→ `slot-meta.js`（文件槽元数据）→ `pages/*.js`（单页逻辑）。
 - **样式**：`app/static/assets/pages/*.css` 由设计稿通过 `tools/extract_css.py` 抽取，不建议手工微调；要改视觉请改设计稿后重跑脚本。
 - **新增文件类型或字段**：上传类型与扩展名在 `app/server.py` 的 `ALLOWED_EXT`；解析摘要逻辑在 `app/core/store.py` 的 `_parse()`；前端文件槽在 `slot-meta.js`。
-- **版本号**：`app/__init__.py` 的 `__version__` 与 `BUILD`，会显示在标题栏与状态栏。
+- **版本号**：`app/__init__.py` 的 `__version__` 与 `BUILD`，会显示在标题栏与状态栏；发版时同步更新 `CHANGELOG.md` 并打 tag。
 
 ---
 
-*文档基于当前工作副本（v2.4.1 / build 20260922）的实际代码与一次完整自检结果整理。*
+## 十八、版本与更新日志
+
+- 版本号遵循语义化版本：新增功能 / 核对规则升 minor，问题修复升 patch。
+- 每次发布同步更新 [CHANGELOG.md](CHANGELOG.md)，在仓库打 `vX.Y.Z` 标签并创建 GitHub Release。
+- 当前版本 **v2.5.0**（build 20261027）。
+
+---
+
+*文档基于当前工作副本（v2.5.0 / build 20261027）的实际代码与一次完整自检结果整理。*
