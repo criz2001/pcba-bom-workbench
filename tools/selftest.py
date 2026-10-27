@@ -405,29 +405,29 @@ def main() -> int:
               all("待确认" in str(ws2.cell(r, note_col).value or "") for r in range(2, len(rows2) + 2)))
         wb2.close()
 
-    print("\n== 14. 图标与安装包产物 ==")
-    sys.path.insert(0, os.path.join(ROOT, "install"))
-    import make_icon  # noqa: E402
-
+    print("\n== 14. 安装组件与图标 ==")
     icon = os.path.join(ROOT, "app", "static", "assets", "app.ico")
     check("应用图标存在", os.path.exists(icon), icon)
     if os.path.exists(icon):
-        ok_icon, detail_icon = make_icon.validate(icon)
-        check("应用图标结构合法（含多尺寸帧）", ok_icon, detail_icon)
+        with open(icon, "rb") as fh:
+            head = fh.read(6)
+        frames = int.from_bytes(head[4:6], "little") if len(head) >= 6 else 0
+        check("图标是合法的 ICO 且含图像帧",
+              head[:4] == b"\x00\x00\x01\x00" and frames >= 1,
+              f"{head[:4]!r} frames={frames}")
 
-    for name in ("install.ps1", "uninstall.ps1", "setup_stub.cs", "build_setup.py"):
-        path = os.path.join(ROOT, "install", name)
-        check(f"安装组件 {name} 存在", os.path.exists(path))
+    for name in ("install.ps1", "安装.bat", "uninstall.ps1", "卸载.bat"):
+        check(f"安装组件 {name} 存在", os.path.exists(os.path.join(ROOT, name)))
 
-    setup_exe = os.path.join(ROOT, "install", "dist", "PCBA-BOM-Workbench-Setup.exe")
-    if os.path.exists(setup_exe):
-        with open(setup_exe, "rb") as fh:
-            head = fh.read(2)
-        size = os.path.getsize(setup_exe)
-        check("Setup.exe 是有效可执行文件", head == b"MZ" and size > 100000,
-              f"{head!r} / {size:,} 字节")
-    else:
-        check("Setup.exe 未生成时跳过（需先运行 build_setup.py）", True)
+    installer_path = os.path.join(ROOT, "install.ps1")
+    installer = ""
+    if os.path.exists(installer_path):
+        with open(installer_path, encoding="utf-8-sig") as fh:
+            installer = fh.read()
+    check("安装器会创建桌面快捷方式",
+          "CreateShortcut" in installer and "GetFolderPath('Desktop')" in installer)
+    check("安装器会写入卸载注册表项", "CurrentVersion\\Uninstall" in installer)
+    check("安装器会生成 install.json", "install.json" in installer)
 
     print("\n" + "=" * 62)
     if failures:

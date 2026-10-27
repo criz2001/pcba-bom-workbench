@@ -13,8 +13,10 @@ logs/
 workspace/
 *.log
 
-# 本机配置：安装程序写入，含本机绝对路径
+# 本机配置与安装标记：安装程序生成，含本机绝对路径
 config.json
+install.json
+*.lnk
 
 # 输出与临时文件
 outputs/
