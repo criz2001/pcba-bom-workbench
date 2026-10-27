@@ -109,6 +109,24 @@ def write_xlsx(path: str, rows: list[list]) -> None:
     wb.save(path)
 
 
+def write_bad_dimension_xlsx(path: str, rows: list[list]) -> None:
+    """写出一个 <dimension ref="A1"/> 标记错误的表格（模拟部分 ERP 导出）。"""
+    import re
+    import zipfile
+
+    write_xlsx(path, rows)
+    tmp = path + ".tmp"
+    with zipfile.ZipFile(path) as src, zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as dst:
+        for item in src.infolist():
+            data = src.read(item.filename)
+            if item.filename == "xl/worksheets/sheet1.xml":
+                text = data.decode("utf-8")
+                text = re.sub(r'<dimension ref="[^"]*"/>', '<dimension ref="A1"/>', text)
+                data = text.encode("utf-8")
+            dst.writestr(item, data)
+    os.replace(tmp, path)
+
+
 def build_fixtures() -> dict[str, str]:
     files = {}
     for name, content in (("demo.SchDoc", SCHEDOC), ("demo.PcbDoc", PCBDOC)):
@@ -173,6 +191,17 @@ def main() -> int:
     check("BOM 明细行 6 行", bom["summary"]["detailRows"] == 6, str(bom["summary"]))
     check("BOM 残缺空行 1 行", bom["summary"]["incompleteRows"] == 1)
     check("物料总表 6 条", master["summary"]["count"] == 6, str(master["summary"]))
+
+    # 回归：ERP 导出可能把 <dimension> 写成 A1，实际却有上万行；
+    # 只读模式不能因此只读到第一格。
+    bad_dim = os.path.join(TMP, "master-bad-dimension.xlsx")
+    write_bad_dimension_xlsx(bad_dim, MASTER_ROWS)
+    from app.core import master as master_mod
+
+    m_bad = master_mod.load_master(bad_dim)
+    check("维度标记错误的总表仍能解析全部行",
+          m_bad.count == len(MASTER_ROWS) - 1, str(m_bad.summary()))
+    check("维度标记错误时仍能定位编码列", m_bad.columns.get("code") == 1, str(m_bad.columns))
 
     print("\n== 2. 基准一致性 ==")
     base = client.post("/api/baseline", json={}).get_json()

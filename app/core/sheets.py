@@ -59,6 +59,13 @@ def _load_xlsx(path: str, sheet: int | str | None) -> tuple[list[list[Any]], lis
             if sheet not in wb.sheetnames:
                 raise SheetError(f"工作簿中不存在工作表「{sheet}」")
             ws = wb[sheet]
+        # 部分 ERP 导出的工作表把 <dimension> 写成 A1（实际有上万行），
+        # openpyxl 只读模式会按这个范围裁剪，导致整张表只读到第一格。
+        # reset_dimensions() 让迭代器按真实记录扫描，不再相信该标记。
+        try:
+            ws.reset_dimensions()
+        except AttributeError:
+            pass
         rows: list[list[Any]] = []
         for i, row in enumerate(ws.iter_rows(values_only=True)):
             if i >= MAX_ROWS:
