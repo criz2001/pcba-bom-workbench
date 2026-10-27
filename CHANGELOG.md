@@ -4,6 +4,29 @@
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [2.7.0] - 2026-10-27
+
+### 修复
+
+- 修复「安装成功但双击桌面图标启动失败」：安装器现在先校验 Python 3.10+，并在安装阶段创建
+  `.venv`、安装依赖；只有运行环境就绪才报告安装成功，不再把环境问题留到首次点击。
+- 修复安装器在 Windows PowerShell 5.1 下中断的问题：pip 向 stderr 输出提示时，
+  `$ErrorActionPreference = 'Stop'` 会让重定向的 stderr 变成终止错误，导致 `.venv` 刚建好就退出。
+- 修复快捷方式最小化运行时看不到启动错误：`start.bat` 现在写入 `logs\start.log`，
+  并通过 `app\startup_error.ps1` 弹窗提示（Python 缺失 / 版本过低 / 依赖安装失败 / 启动超时）。
+- 启动等待从 24 秒延长到 60 秒；只有系统 Python 已具备核心依赖时才回退，避免回退后报
+  `启动失败：No module named 'flask'`。
+
+### 新增
+
+- `install.ps1` 新增 `-SkipEnvSetup`（离线/高级场景跳过预装环境）。
+- `install.json` 新增 `envPrepared` 字段；安装过程写入 `logs\setup.log`。
+- 自检第 14 节增加启动诊断脚本、安装器环境准备逻辑的检查。
+
+### 变更
+
+- 版本号 2.7.0（build 20261027）；README 补充该故障的排查说明。
+
 ## [2.6.0] - 2026-10-27
 
 ### 新增

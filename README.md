@@ -6,7 +6,7 @@
 | 项目 | 值 |
 | --- | --- |
 | 应用名称 | PCBA BOM 工作台（PCBA-BOM-Workbench） |
-| 版本 / 构建 | v2.6.0 · build 20261027（[更新日志](CHANGELOG.md)） |
+| 版本 / 构建 | v2.7.0 · build 20261027（[更新日志](CHANGELOG.md)） |
 | 运行平台 | Windows 10 / 11（桌面窗口模式依赖 WebView2） |
 | 技术栈 | Python 3.10+ / Flask / openpyxl / olefile / pywebview + 原生 HTML/CSS/JS |
 | 数据存储 | 本地文件（工作区目录 + JSON 状态 + 任务快照） |
@@ -63,11 +63,13 @@
 1. 确认已安装 **Python 3.10 或更高版本**，安装时勾选 *Add Python to PATH*。
 2. 双击根目录下的 `安装.bat`（内部调用 `install.ps1`）。
 3. 安装器会自动：
+   - 检查 Python 3.10+（不满足会直接报错，不再“装完才发现用不了”）；
    - 把程序复制到 `%LOCALAPPDATA%\Programs\PCBA-BOM-Workbench`；
    - 数据目录设为 `%LOCALAPPDATA%\PCBA-BOM-Workbench\data`（与旧版一致，升级不丢数据）；
+   - **创建 `.venv` 并安装依赖**（首次约 1–3 分钟；失败会明确报错并提示检查网络）；
    - 在**桌面**和开始菜单创建「PCBA BOM 工作台」图标（使用应用自带 `app.ico`）；
    - 写入 `config.json`、`install.json`，并注册「应用和功能」卸载入口。
-4. 双击桌面图标即可打开。首次点击会自动准备 `.venv`，之后启动是秒级。
+4. 看到「安装完成 + 运行环境已就绪」后，双击桌面图标即可打开，启动是秒级。
 5. 升级：重新运行 `安装.bat`，已有 `.venv` 与数据保留；卸载：运行程序目录下的 `卸载.bat`。
 
 > 不想安装时，可直接双击 `start.bat` 从源码启动，见方式二。
@@ -81,6 +83,7 @@
 | `-ShortcutName <名称>` | 自定义快捷方式名称 |
 | `-NoDesktopShortcut` / `-NoStartMenuShortcut` | 不创建对应快捷方式 |
 | `-NoRegistry` | 不写卸载注册表项 |
+| `-SkipEnvSetup` | 跳过 `.venv` 与依赖安装（离线/高级场景；首次启动时再准备） |
 | `-Launch` | 安装完成后立即启动 |
 | `-Quiet` | 减少输出、不等待回车 |
 
@@ -95,8 +98,8 @@
    - 以 `pythonw` 启动 `app\desktop.py`，等待窗口就绪标记后结束。
 4. 窗口标题为「PCBA BOM 工作台」，同时只会存在一个实例。
 
-> 如果环境已存在但不可用（例如整个文件夹被移动过），`start.bat` 会提示并自动重建 `.venv`。
-> 如果依赖安装失败（通常是网络问题），会退回 **系统 Python** 继续启动，而不是直接报错退出。
+> 如果环境已存在但不可用（例如整个文件夹被移动过），`start.bat` 会自动重建 `.venv`。
+> 依赖安装失败时会弹出提示（快捷方式最小化也能看到），详细过程写入 `logs\start.log`；只有系统 Python 已具备核心依赖时才会回退。
 > 启动失败的详细信息写入 `logs\desktop.log`。
 
 ### 方式三：浏览器模式手动启动
@@ -285,7 +288,7 @@ python -m venv .venv
 ```json
 {
   "workspace": "C:\\Users\\<你的用户名>\\AppData\\Local\\PCBA-BOM-Workbench\\data",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "installedAt": "2026-09-22 16:03:05"
 }
 ```
@@ -522,12 +525,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File uninstall.ps1
 
 | 现象 | 排查方向 |
 | --- | --- |
-| 双击后没有窗口 | 看 `logs/desktop.log`；`start.bat` 等待约 24 秒仍无 `logs/desktop.ready` 会提示失败 |
+| 双击后没有窗口 | 看 `logs/desktop.log`；`start.bat` 等待约 60 秒仍无 `logs/desktop.ready` 会弹窗提示 |
 | 桌面图标没了 / 换电脑想重建 | 重新运行 `安装.bat`，会覆盖安装并重建桌面和开始菜单图标，数据不会丢 |
-| 双击桌面图标没反应 | 看安装目录下 `logs/desktop.log`；首次启动需要准备 Python 环境，稍等或手动运行安装目录的 `start.bat` 查看报错 |
+| **安装成功，但双击桌面图标提示启动失败** | 旧版安装器只复制文件，首次启动才装依赖；依赖安装失败时会出现这个现象。请重新运行 `安装.bat`（2.7.0+ 会在安装阶段准备好运行环境），仍失败则把 `logs\start.log` 与 `logs\desktop.log` 发给维护人 |
+| 双击桌面图标没反应 | 看安装目录下 `logs\start.log` 与 `logs\desktop.log`；也可手动运行安装目录的 `start.bat` 查看控制台输出 |
 | 提示「已经在运行」 | 已有实例持有工作区文件锁，从任务栏切到已打开窗口即可 |
 | 首次启动很慢 | 正在创建 `.venv` 并安装依赖，属正常；之后启动是秒级 |
-| 依赖安装失败 | 检查网络；`start.bat` 会自动用系统 Python 兜底，但需系统 Python 装有 Flask/openpyxl/olefile |
+| 依赖安装失败 | 检查网络/代理；重新运行 `安装.bat`，安装器会重建 `.venv`。若系统 Python 已有 Flask/openpyxl/olefile，也可继续兜底启动 |
 | 上传文件提示「解析失败」 | 上传只做解析，错误原因会显示在文件槽与接口返回中：可能是文件加密、扩展名与内容不符、表格为空、不是有效的 Altium 文件 |
 | `.xls` 提示不支持 | 用 Excel 另存为 `.xlsx` 后重新上传 |
 | 核对结果「封装不符」很多 | 先确认 PCB 与原理图是否同一版次；基准不一致时页面会告警。BOM 与编码都对、仅 PCB 不同时该问题会降为「一般」 |
@@ -553,8 +557,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File uninstall.ps1
 
 - 版本号遵循语义化版本：新增功能 / 核对规则升 minor，问题修复升 patch。
 - 每次发布同步更新 [CHANGELOG.md](CHANGELOG.md)，在仓库打 `vX.Y.Z` 标签并创建 GitHub Release。
-- 当前版本 **v2.6.0**（build 20261027）。
+- 当前版本 **v2.7.0**（build 20261027）。
 
 ---
 
-*文档基于当前工作副本（v2.6.0 / build 20261027）的实际代码与一次完整自检结果整理。*
+*文档基于当前工作副本（v2.7.0 / build 20261027）的实际代码与一次完整自检结果整理。*
