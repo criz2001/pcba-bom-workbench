@@ -6,7 +6,7 @@
 | 项目 | 值 |
 | --- | --- |
 | 应用名称 | PCBA BOM 工作台（PCBA-BOM-Workbench） |
-| 版本 / 构建 | v2.7.1 · build 20261027（[更新日志](CHANGELOG.md)） |
+| 版本 / 构建 | v2.7.2 · build 20261027（[更新日志](CHANGELOG.md)） |
 | 运行平台 | Windows 10 / 11（桌面窗口模式依赖 WebView2） |
 | 技术栈 | Python 3.10+ / Flask / openpyxl / olefile / pywebview + 原生 HTML/CSS/JS |
 | 数据存储 | 本地文件（工作区目录 + JSON 状态 + 任务快照） |
@@ -288,7 +288,7 @@ python -m venv .venv
 ```json
 {
   "workspace": "C:\\Users\\<你的用户名>\\AppData\\Local\\PCBA-BOM-Workbench\\data",
-  "version": "2.7.1",
+  "version": "2.7.2",
   "installedAt": "2026-09-22 16:03:05"
 }
 ```
@@ -534,6 +534,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File uninstall.ps1
 | 依赖安装失败 | 检查网络/代理；重新运行 `安装.bat`，安装器会重建 `.venv`。若系统 Python 已有 Flask/openpyxl/olefile，也可继续兜底启动 |
 | 上传文件提示「解析失败」 | 上传只做解析，错误原因会显示在文件槽与接口返回中：可能是文件加密、扩展名与内容不符、表格为空、不是有效的 Altium 文件 |
 | 物料总表导入后显示 0 条 / 无法解析 | 2.7.1 已修复 ERP 导出把工作表 `<dimension>` 写成 A1 的文件；升级后重新上传即可 |
+| 位置号列整列为空、位号写在备注列 | 工具会从备注回填全部位号；设计文件中不存在的位号会报「位号不存在」，不会再误报「用量≠位号数」 |
 | `.xls` 提示不支持 | 用 Excel 另存为 `.xlsx` 后重新上传 |
 | 核对结果「封装不符」很多 | 先确认 PCB 与原理图是否同一版次；基准不一致时页面会告警。BOM 与编码都对、仅 PCB 不同时该问题会降为「一般」 |
 | 生成结果大量「待确认」 | 多半是未上传物料总表，或原理图元件缺少 Value/Comment（没有可比对的规格值），工具不会强行匹配 |
@@ -558,8 +559,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File uninstall.ps1
 
 - 版本号遵循语义化版本：新增功能 / 核对规则升 minor，问题修复升 patch。
 - 每次发布同步更新 [CHANGELOG.md](CHANGELOG.md)，在仓库打 `vX.Y.Z` 标签并创建 GitHub Release。
-- 当前版本 **v2.7.1**（build 20261027）。
+- 当前版本 **v2.7.2**（build 20261027）。
 
 ---
 
-*文档基于当前工作副本（v2.7.1 / build 20261027）的实际代码与一次完整自检结果整理。*
+*文档基于当前工作副本（v2.7.2 / build 20261027）的实际代码与一次完整自检结果整理。*
