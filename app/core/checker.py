@@ -166,20 +166,24 @@ def run_check(
 
     # ---------- 位置号被填进备注列的情况 ----------
     # 有人填 BOM 时位置号列留空、把位号写进备注，这会让「位号缺失」整片误报。
-    # 这里用设计文件里的位号集合做过滤后回填：只有确实存在于 PCB/原理图的位号
-    # 才会被采纳，既消掉误报，也不会凭空造出「位号不存在」。
+    # 备注看起来确实是位号列表（至少有一个能在设计文件里找到）时整列采用：
+    #   · 已知位号参与缺失 / 重复 / 用量核对；
+    #   · 设计文件里没有的位号交给「位号不存在」规则报出，不能静默丢弃，
+    #     否则用量会按过滤后的个数比较，出现“明明写了 5 个却只报 4 个”的误报。
+    # 若备注里的 token 全都不在设计文件中，则视为普通文字，不做回填。
     design_refs = set(pcb_des) | set(sch_des)
     recovered: list[dict[str, Any]] = []
     for line in bom.lines:
         if line["refList"] or not line.get("noteRefs"):
             continue
-        hits = [r for r in line["noteRefs"] if r in design_refs]
-        if not hits:
+        note_refs = [r for r in dict.fromkeys(line["noteRefs"]) if r]
+        known = [r for r in note_refs if r in design_refs]
+        if not known:
             continue
-        line["refList"] = hits
-        line["refs"] = " ".join(hits)
+        line["refList"] = note_refs
+        line["refs"] = " ".join(note_refs)
         line["refsSource"] = "备注"
-        recovered.append({"row": line["row"], "refs": hits, "note": line.get("note", "")})
+        recovered.append({"row": line["row"], "refs": note_refs, "note": line.get("note", "")})
 
     if recovered:
         res.refs_from_note = recovered
@@ -228,8 +232,9 @@ def run_check(
         if line["refList"] and line["qty"] is not None and "qty" in enabled:
             q = int(line["qty"])
             if q != len(line["refList"]):
+                source = "备注列" if line.get("refsSource") == "备注" else "位置号"
                 res.add("用量≠位号数", "严重", r, "J·M",
-                        f"用量={q}，但位置号只列出 {len(line['refList'])} 个（{line['refs']}）")
+                        f"用量={q}，但{source}只列出 {len(line['refList'])} 个（{line['refs']}）")
 
         # 6 / 7. 物料编码
         mat = None
@@ -260,10 +265,12 @@ def run_check(
 
         # 4. 位号不存在
         if "unknown" in enabled:
+            from_note = line.get("refsSource") == "备注"
             for ref in line["refList"]:
                 if ref not in pcb_des and ref not in sch_des:
+                    prefix = "备注列位号" if from_note else "位号"
                     res.add("位号不存在", "严重", r, "M",
-                            f"位号 {ref} 在 PCB/原理图中不存在（多余位号或书写错误）")
+                            f"{prefix} {ref} 在 PCB/原理图中不存在（多余位号或书写错误）")
                     res.unknown_refs.append(ref)
 
     # 3. 位号缺失

@@ -220,6 +220,27 @@ def main() -> int:
     dup = [p for p in result["problems"] if p["kind"] == "位号重复"]
     check("重复位号定位到后出现的行",
           len(dup) == 1 and dup[0]["row"] == 8, str(dup))
+
+    # 备注列位号：位置号整列为空时从备注回填；备注中设计文件不存在的位号
+    # 不能被静默丢掉，否则会误报「用量≠位号数」。
+    note_bom_path = os.path.join(TMP, "bom-note-refs.xlsx")
+    write_xlsx(note_bom_path, [
+        BOM_ROWS[0],
+        [1, "", "1.01.03.102", "贴片电阻 1K 1% 0603", "0603 1K 1% 100mW", 3, 1, "", "R1 C1 Z9"],
+    ])
+    from app.core import altium as altium_mod
+    from app.core import bom_reader as bom_reader_mod
+    from app.core import checker as checker_mod
+
+    sch_info = altium_mod.extract_sch(open(files["demo.SchDoc"], "rb").read(), "demo.SchDoc")
+    pcb_info = altium_mod.extract_pcb(open(files["demo.PcbDoc"], "rb").read(), "demo.PcbDoc")
+    note_bom = bom_reader_mod.load_bom(note_bom_path)
+    note_res = checker_mod.run_check(sch_info, pcb_info, note_bom, None)
+    row2 = [p for p in note_res.problems if p["row"] == 2]
+    check("备注位号回填后不再误报用量",
+          not any(p["kind"] == "用量≠位号数" for p in row2), str(row2))
+    check("备注中设计文件不存在的位号会被报出",
+          any(p["kind"] == "位号不存在" and "Z9" in p["msg"] for p in row2), str(row2))
     check("输出文件已生成", bool(task["output"]), str(task.get("output")))
     check("值比对有结果", result["metrics"]["valueDiff"] >= 1, str(result["metrics"]))
     check("问题分级统计自洽",
