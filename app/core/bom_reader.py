@@ -88,9 +88,27 @@ class BomFile:
         return [l for l in self.lines if not l["incomplete"]]
 
     def all_refs(self) -> set[str]:
+        """所有位号的集合。
+
+        注意：集合会丢掉「一个位号出现了几次」的信息，只适合判断
+        「设计文件里的位号有没有出现在 BOM 里」。要检查跨行重复分配，
+        请用 ref_occurrences()。
+        """
         out: set[str] = set()
         for line in self.lines:
             out.update(line["refList"])
+        return out
+
+    def ref_occurrences(self) -> dict[str, list[int]]:
+        """位号 → 出现的行号列表（同一行重复会出现相同行号）。
+
+        与 all_refs() 不同，这里保留每一次出现：长度为 1 表示只被
+        一行认领，长度 > 1 表示跨行（或同行）重复分配。
+        """
+        out: dict[str, list[int]] = {}
+        for line in self.lines:
+            for ref in line["refList"]:
+                out.setdefault(ref, []).append(line["row"])
         return out
 
     def detail_rows(self) -> list[dict[str, Any]]:

@@ -2,7 +2,7 @@
 
     python tools/selftest.py
 
-样例覆盖 9 类核对规则与主要生成分支，用来验证引擎与接口是否可用。
+样例覆盖 10 类核对规则与主要生成分支，用来验证引擎与接口是否可用。
 运行在临时工作区，不影响真实 workspace。
 """
 
@@ -90,6 +90,8 @@ BOM_ROWS = [
     [4, "", "1.99.99.999", "5 脚连接器 1.25mm", "1.25-5P 卧贴", 1, 1, "J5", ""],
     [6, "", "1.03.02.051", "肖特基二极管 SS34", "SMA 40V 3A", 2, 1, "D1，D2", ""],
     [7, "", "", "", "", 3, 1, "", ""],
+    # R1 在第 1 行已经分配过，这一行用于验证「位号重复」规则
+    [8, "", "1.01.03.102", "贴片电阻 1K 1% 0603", "0603 1K 1% 100mW", 1, 1, "R1", ""],
 ]
 
 TEMPLATE_ROWS = [
@@ -168,7 +170,7 @@ def main() -> int:
     check("原理图解析出 5 个元件", sch["summary"]["components"] == 5, str(sch["summary"]))
     check("PCB 解析出 6 个元件", pcb["summary"]["components"] == 6, str(pcb["summary"]))
     check("PCB 有 1 个无位号元件", pcb["summary"]["unlabeled"] == 1)
-    check("BOM 明细行 5 行", bom["summary"]["detailRows"] == 5, str(bom["summary"]))
+    check("BOM 明细行 6 行", bom["summary"]["detailRows"] == 6, str(bom["summary"]))
     check("BOM 残缺空行 1 行", bom["summary"]["incompleteRows"] == 1)
     check("物料总表 6 条", master["summary"]["count"] == 6, str(master["summary"]))
 
@@ -183,9 +185,12 @@ def main() -> int:
     result = task["result"]
     kinds = {p["kind"] for p in result["problems"]}
     for expected in ["封装不符", "名称与总表不符", "位号缺失", "位号不存在",
-                     "用量≠位号数", "缺物料编码", "编码不存在", "位号格式",
-                     "项次跳号", "空行(未填写)"]:
+                     "位号重复", "用量≠位号数", "缺物料编码", "编码不存在",
+                     "位号格式", "项次跳号", "空行(未填写)"]:
         check(f"命中规则「{expected}」", expected in kinds, f"实际：{sorted(kinds)}")
+    dup = [p for p in result["problems"] if p["kind"] == "位号重复"]
+    check("重复位号定位到后出现的行",
+          len(dup) == 1 and dup[0]["row"] == 8, str(dup))
     check("输出文件已生成", bool(task["output"]), str(task.get("output")))
     check("值比对有结果", result["metrics"]["valueDiff"] >= 1, str(result["metrics"]))
     check("问题分级统计自洽",

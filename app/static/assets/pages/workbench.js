@@ -125,7 +125,7 @@
       box.innerHTML = BOM.empty({
         icon: 'shield-check',
         title: '尚无核对结果',
-        desc: '完成一次 BOM 三方核对后，这里会按 9 类规则汇总问题分布。',
+        desc: '完成一次 BOM 三方核对后，这里会按 10 类规则汇总问题分布。',
         actions: [{ label: '去核对', href: '/check/setup', primary: true }]
       });
       if (desc) { desc.textContent = '尚未执行核对'; }
@@ -133,7 +133,7 @@
     }
 
     if (desc) {
-      desc.textContent = '按 9 类核对规则汇总，共 ' + (check.metrics.total || 0) + ' 项 · ' +
+      desc.textContent = '按 10 类核对规则汇总，共 ' + (check.metrics.total || 0) + ' 项 · ' +
         (check.finishedAt || check.createdAt || '');
     }
     box.innerHTML = dist.map(function (d) {

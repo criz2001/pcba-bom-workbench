@@ -82,7 +82,7 @@
     var dist = data.distribution || [];
     if (!dist.length) {
       box.innerHTML = '<li style="list-style:none">' +
-        BOM.empty({ icon: 'circle-check', title: '未发现问题', desc: '本次核对 9 类规则全部通过。' }) + '</li>';
+        BOM.empty({ icon: 'circle-check', title: '未发现问题', desc: '本次核对 10 类规则全部通过。' }) + '</li>';
       return;
     }
     box.innerHTML = dist.map(function (d) {
@@ -131,7 +131,7 @@
         icon: data.problems.length ? 'search' : 'circle-check',
         title: data.problems.length ? '没有匹配的问题' : '未发现问题',
         desc: data.problems.length ? '试着调整级别筛选或搜索关键词。'
-                                   : '9 类核对规则全部通过，BOM 与设计文件一致。'
+                                   : '10 类核对规则全部通过，BOM 与设计文件一致。'
       });
       return;
     }

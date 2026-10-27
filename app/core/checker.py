@@ -8,7 +8,7 @@
          ↑
         BOM
 
-九类规则见 ``RULES``。
+十类规则见 ``RULES``。
 """
 
 from __future__ import annotations
@@ -25,6 +25,7 @@ RULES = [
     ("name", "名称与总表不符", "严重", "BOM 子项物料名称 ≠ 物料总表同编码名称"),
     ("missing", "位号缺失", "严重", "PCB ∪ 原理图位号 − BOM 位号 ≠ 空集"),
     ("unknown", "位号不存在", "严重", "BOM 位号 −（PCB ∪ 原理图）≠ 空集"),
+    ("duplicate", "位号重复", "严重", "同一位号被分配到多行，或同一行重复出现"),
     ("qty", "用量≠位号数", "严重", "用量分子 ≠ 位置号拆分后的位号个数"),
     ("nocode", "缺物料编码", "严重", "子项物料编码为空"),
     ("badcode", "编码不存在", "严重", "编码在物料总表中查不到"),
@@ -37,6 +38,7 @@ ADVICE = {
     "name": "按物料总表正式名称回填",
     "missing": "补齐位号并同步核对用量",
     "unknown": "删除该位号或改正为设计文件中的实际位号",
+    "duplicate": "删除重复分配，每个位号只保留在一行，并按唯一位号数核对用量",
     "qty": "补全同行位号或修正用量",
     "nocode": "在物料总表中检索同规格物料并回填编码",
     "badcode": "确认编码是否正确，或改用物料总表中的有效编码",
@@ -77,6 +79,7 @@ def _advice_key(kind: str) -> str:
         "名称与总表不符": "name",
         "位号缺失": "missing",
         "位号不存在": "unknown",
+        "位号重复": "duplicate",
         "用量≠位号数": "qty",
         "缺物料编码": "nocode",
         "编码不存在": "badcode",
@@ -87,6 +90,30 @@ def _advice_key(kind: str) -> str:
         "物料已禁用": "disabled",
     }
     return mapping.get(kind, "")
+
+
+def _report_duplicates(res: CheckResult, duplicates: dict[str, list[int]]) -> None:
+    """把重复位号拆成可定位到行的问题：同一行重复 + 跨行重复。
+
+    行归属规则：第一行视为「原分配」，之后每个重复出现的行各报一条，
+    这样结果工作簿能把真正需要修改的那一行高亮出来。
+    """
+    for ref in sorted(duplicates, key=ref_sort_key):
+        rows = duplicates[ref]
+        unique_rows: list[int] = []
+        for row in rows:
+            if row not in unique_rows:
+                unique_rows.append(row)
+        for row in unique_rows:
+            count = rows.count(row)
+            if count > 1:
+                res.add("位号重复", "严重", row, "M",
+                        f"位号 {ref} 在同一行位置号列出现 {count} 次")
+        for i, row in enumerate(unique_rows[1:], start=1):
+            prior = "、".join(str(r) for r in unique_rows[:i])
+            res.add("位号重复", "严重", row, "M",
+                    f"位号 {ref} 已在第 {prior} 行分配，本行重复出现 → 重复分配"
+                    f"（共 {len(unique_rows)} 行）")
 
 
 def run_check(
@@ -164,6 +191,17 @@ def run_check(
 
     bom_refs = bom.all_refs()
     lines = bom.lines
+
+    # ---------- 位号重复分配 ----------
+    # 集合比对只能回答「BOM 里有没有这个位号」，无法保留出现次数；
+    # 同一位号被两行同时认领时，缺失/多余位号都不会报，必须单独检查。
+    duplicates = (
+        {ref: rows for ref, rows in bom.ref_occurrences().items() if len(rows) > 1}
+        if "duplicate" in enabled
+        else {}
+    )
+    if duplicates:
+        _report_duplicates(res, duplicates)
 
     # ---------- 逐条核对 ----------
     for line in lines:
@@ -258,7 +296,9 @@ def run_check(
         in_bom = ref in bom_refs
         pc = pcb_des.get(ref, {})
         sc = sch_des.get(ref, {})
-        if in_bom and (ref in pcb_des or ref in sch_des):
+        if ref in duplicates:
+            conclusion = "★ BOM 重复分配"
+        elif in_bom and (ref in pcb_des or ref in sch_des):
             conclusion = "一致"
         elif in_bom:
             conclusion = "★ BOM 多出该位号"
@@ -293,6 +333,7 @@ def run_check(
         "info": sum(1 for p in res.problems if p["level"] == "提示"),
         "valueDiff": len(res.value_diffs),
         "missing": len(res.missing_refs),
+        "duplicateRefs": len(duplicates),
         "refsFromNote": len(res.refs_from_note),
         "distribution": [
             {
