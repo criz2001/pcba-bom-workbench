@@ -514,6 +514,6 @@ if __name__ == "__main__":
         exit_code = main()
     except Exception as exc:  # 无控制台时用原生弹窗告知失败原因
         traceback.print_exc()
-        notify(f"启动失败：{exc}\n\n详细信息见 logs\\desktop.log")
+        notify(f"启动失败：{exc}\n\n详细信息见 logs\\desktop.log\n可尝试重新运行 安装.bat 修复运行环境。")
         exit_code = 1
     raise SystemExit(exit_code)

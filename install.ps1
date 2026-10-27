@@ -17,6 +17,7 @@
     -NoDesktopShortcut     不创建桌面图标
     -NoStartMenuShortcut   不创建开始菜单快捷方式
     -NoRegistry            不写注册表卸载项
+    -SkipEnvSetup          跳过 .venv 与依赖安装（首次启动时再准备）
     -Launch                安装完成后立即启动
     -Quiet                 减少输出（不等待回车）
 #>
@@ -27,6 +28,7 @@ param(
   [switch]$NoDesktopShortcut,
   [switch]$NoStartMenuShortcut,
   [switch]$NoRegistry,
+  [switch]$SkipEnvSetup,
   [switch]$Launch,
   [switch]$Quiet
 )
@@ -48,6 +50,39 @@ function Fail([string]$text) {
   exit 1
 }
 
+function Find-SystemPython {
+  $candidates = @(
+    @{ Cmd = 'py'; Args = @('-3') },
+    @{ Cmd = 'python'; Args = @() },
+    @{ Cmd = 'python3'; Args = @() }
+  )
+  foreach ($cand in $candidates) {
+    if (-not (Get-Command $cand.Cmd -ErrorAction SilentlyContinue)) { continue }
+    try {
+      $probe = @('-c', 'import sys;print(sys.executable);print(sys.version_info[0], sys.version_info[1], sys.version_info[2]);print(int(sys.version_info>=(3,10)))')
+      $result = & $cand.Cmd ($cand.Args + $probe) 2>$null
+      if (-not $result -or @($result).Count -lt 3) { continue }
+      $lines = @($result | ForEach-Object { ([string]$_).Trim() })
+      $exe = $lines[0]
+      if (-not $exe -or -not (Test-Path $exe)) { continue }
+      $version = (($lines[1] -split 's+') -join '.')
+      return [pscustomobject]@{ Exe = $exe; Version = $version; VersionOk = ($lines[2] -eq '1') }
+    } catch { }
+  }
+  return $null
+}
+
+function Test-Venv([string]$py) {
+  $previous = $ErrorActionPreference
+  $ErrorActionPreference = 'Continue'
+  try {
+    & $py -c 'import flask, openpyxl, olefile' 2>$null
+    return ($LASTEXITCODE -eq 0)
+  } finally {
+    $ErrorActionPreference = $previous
+  }
+}
+
 Say ''
 Say '============================================================'
 Say '  安装 PCBA BOM 工作台'
@@ -64,6 +99,16 @@ foreach ($rel in @('app\desktop.py', 'app\server.py', 'start.bat', 'requirements
   }
 }
 if (-not (Test-Path $env:LOCALAPPDATA)) { Fail '无法确定用户数据目录（LOCALAPPDATA 为空）。' }
+
+# ---------- 1b. 检查 Python（安装成功即应能启动） ----------
+$python = Find-SystemPython
+if (-not $python) {
+  Fail '未检测到 Python 3.10 或更高版本。请先安装 Python（安装时勾选 Add Python to PATH），再重新运行安装器。'
+}
+if (-not $python.VersionOk) {
+  Fail ('检测到 Python ' + $python.Version + '，版本过低（需要 3.10 或更高）。请升级后重新运行安装器。')
+}
+Say ('Python：' + $python.Exe + '（' + $python.Version + '）')
 
 # ---------- 2. 关闭正在运行的实例 ----------
 $stopped = 0
@@ -124,7 +169,56 @@ $cfg = [ordered]@{
 [IO.File]::WriteAllText((Join-Path $InstallDir 'config.json'), ($cfg | ConvertTo-Json), $utf8Bom)
 Say ('已写入 config.json（版本 ' + $version + '）')
 
-# ---------- 5. 快捷方式 ----------
+# ---------- 5. 运行环境（保证“安装成功”即能启动） ----------
+$venvDir = Join-Path $InstallDir '.venv'
+$venvPy = Join-Path $venvDir 'Scripts\python.exe'
+$logsDir = Join-Path $InstallDir 'logs'
+New-Item -ItemType Directory -Force -Path $logsDir | Out-Null
+$setupLog = Join-Path $logsDir 'setup.log'
+$envReady = $false
+
+if ($SkipEnvSetup) {
+  Say '[提示] 已跳过运行环境准备（-SkipEnvSetup），首次启动时会自动创建 .venv'
+} else {
+  # pip 会向 stderr 输出提示；Windows PowerShell 5.1 在 ErrorActionPreference=Stop
+  # 下会把重定向的 stderr 当成终止错误，导致刚建好 .venv 就中断。这里临时放宽。
+  $previousEap = $ErrorActionPreference
+  $ErrorActionPreference = 'Continue'
+  try {
+    if (Test-Path $venvPy) {
+      if (Test-Venv $venvPy) {
+        $envReady = $true
+        Say '运行环境已就绪，跳过依赖安装'
+      } else {
+        Say '现有 .venv 不可用，正在重新创建 ...'
+        Remove-Item $venvDir -Recurse -Force -ErrorAction SilentlyContinue
+      }
+    }
+    if (-not $envReady) {
+      Say '正在准备运行环境（首次安装需要 1-3 分钟，请勿关闭窗口）...'
+      & $python.Exe -m venv $venvDir *>> $setupLog
+      if ($LASTEXITCODE -ne 0 -or -not (Test-Path $venvPy)) {
+        Fail ('创建 .venv 失败。请确认 Python 安装完整。日志：' + $setupLog)
+      }
+      & $venvPy -m pip install -q --upgrade pip *>> $setupLog
+      & $venvPy -m pip install -q -r (Join-Path $InstallDir 'requirements.txt') *>> $setupLog
+      if (-not (Test-Venv $venvPy)) {
+        Fail ('依赖安装失败（常见原因：无网络、代理拦截 PyPI）。请检查网络后重新运行安装器。日志：' + $setupLog)
+      }
+      $envReady = $true
+      Say '运行环境已就绪'
+    }
+    & $venvPy -c 'import webview' 2>$null
+    if ($LASTEXITCODE -ne 0) {
+      Say '正在安装桌面窗口组件 pywebview（可选，失败不影响核心功能）...'
+      & $venvPy -m pip install -q -r (Join-Path $InstallDir 'requirements-desktop.txt') *>> $setupLog
+    }
+  } finally {
+    $ErrorActionPreference = $previousEap
+  }
+}
+
+# ---------- 6. 快捷方式 ----------
 $wsh = New-Object -ComObject WScript.Shell
 $startBat = Join-Path $InstallDir 'start.bat'
 $icon = Join-Path $InstallDir 'app\static\assets\app.ico'
@@ -193,6 +287,7 @@ $marker = [ordered]@{
   dataDir      = $DataDir
   shortcutName = $ShortcutName
   shortcuts    = @($shortcuts)
+  envPrepared  = $envReady
 }
 [IO.File]::WriteAllText((Join-Path $InstallDir 'install.json'), ($marker | ConvertTo-Json), $utf8Bom)
 
@@ -201,7 +296,8 @@ Say '安装完成。'
 Say ('  程序目录：' + $InstallDir)
 Say ('  数据目录：' + $DataDir)
 if ($shortcuts.Count -gt 0) { Say ('  快捷方式：' + $ShortcutName + '.lnk（桌面 / 开始菜单）') }
-Say '  以后双击桌面上的「PCBA BOM 工作台」图标即可打开。'
+if ($envReady) { Say '  运行环境：已就绪，双击桌面图标即可启动。' }
+elseif ($SkipEnvSetup) { Say '  运行环境：已跳过准备，首次启动时会自动创建。' }
 Say '  升级时重新运行本安装器即可，数据与已建环境会保留。'
 Say ''
 if ($Launch) {

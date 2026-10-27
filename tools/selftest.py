@@ -428,6 +428,18 @@ def main() -> int:
           "CreateShortcut" in installer and "GetFolderPath('Desktop')" in installer)
     check("安装器会写入卸载注册表项", "CurrentVersion\\Uninstall" in installer)
     check("安装器会生成 install.json", "install.json" in installer)
+    check("安装器会检查 Python 并预装运行环境",
+          "Find-SystemPython" in installer and "Test-Venv" in installer and "-SkipEnvSetup" in installer)
+
+    helper_path = os.path.join(ROOT, "app", "startup_error.ps1")
+    check("启动失败提示脚本存在", os.path.exists(helper_path), helper_path)
+    launcher = ""
+    start_bat = os.path.join(ROOT, "start.bat")
+    if os.path.exists(start_bat):
+        with open(start_bat, encoding="utf-8", errors="replace") as fh:
+            launcher = fh.read()
+    check("启动器会写 start.log 并调用错误提示",
+          "start.log" in launcher and "startup_error.ps1" in launcher)
 
     print("\n" + "=" * 62)
     if failures:
